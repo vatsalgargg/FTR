@@ -1,0 +1,10 @@
+{
+  "name": "ftr",
+  "version": "1.0.0",
+  "private": true,
+  "description": "First Time Resolver — IT Solutions & Services website",
+  "scripts": {
+    "deploy": "wrangler deploy",
+    "pages:deploy": "wrangler pages deploy dist"
+  }
+}
