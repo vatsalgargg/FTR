@@ -158,8 +158,9 @@ updateTileVisibility();
     '.footer-nav > a',
   ].join(',');
 
-  // Split an element's content into per-letter .wl spans, preserving any
-  // child element nodes (like arrow icon spans) completely untouched.
+  // Split an element's content into per-letter .wl spans, grouping all letters
+  // into a single .pill-label flex item so flex containers (like .pill) only space
+  // the text block and the arrow icon, NOT each individual letter!
   function prepare(el) {
     if (el.dataset.waveReady) return;
     el.dataset.waveReady = '1';
@@ -171,6 +172,9 @@ updateTileVisibility();
     const nodes = [...el.childNodes];
     el.innerHTML = '';
 
+    const labelWrapper = document.createElement('span');
+    labelWrapper.className = 'pill-label';
+
     for (const node of nodes) {
       if (node.nodeType === Node.TEXT_NODE) {
         // Split every character in the text node into its own .wl span.
@@ -179,12 +183,18 @@ updateTileVisibility();
           s.className = 'wl';
           s.setAttribute('aria-hidden', 'true');
           s.textContent = ch === ' ' ? '\u00a0' : ch;
-          el.appendChild(s);
+          labelWrapper.appendChild(s);
         }
       } else {
+        if (labelWrapper.childNodes.length && !labelWrapper.parentElement) {
+          el.appendChild(labelWrapper);
+        }
         // Element node (e.g. <span>↗</span>) — re-attach unchanged.
         el.appendChild(node);
       }
+    }
+    if (labelWrapper.childNodes.length && !labelWrapper.parentElement) {
+      el.appendChild(labelWrapper);
     }
   }
 
@@ -213,4 +223,90 @@ updateTileVisibility();
     attachHover(el);
   });
 })();
+
+// ─── Scroll-Scrubbed "Split-Flap" CTA Heading ──────────────────────────────
+// Uses GSAP ScrollTrigger with scrub: true pinned over a scroll track.
+// Each word flips from rotateX(-80deg), opacity: 0 -> rotateX(0deg), opacity: 1
+// with transform-origin: 50% 100% in perspective: 600px.
+// 4 overlapping windows: word i's window is [i * 0.18, i * 0.18 + 0.55].
+// Scrolling backward reverses the flip exactly.
+(function initSplitFlapCTA() {
+  const container = document.querySelector('.contact-pinned-wrapper');
+  const banner = document.querySelector('.contact-banner');
+  const flapWords = document.querySelectorAll('.flap-word');
+  if (!container || !banner || !flapWords.length) return;
+
+  function setDirect() {
+    flapWords.forEach(w => {
+      w.style.opacity = '1';
+      w.style.transform = 'none';
+    });
+  }
+
+  if (motionOff || reducedMotion.matches) {
+    setDirect();
+    return;
+  }
+
+  if (typeof gsap !== 'undefined' && typeof ScrollTrigger !== 'undefined') {
+    gsap.registerPlugin(ScrollTrigger);
+
+    const tl = gsap.timeline({
+      scrollTrigger: {
+        trigger: container,
+        start: 'top top+=60',
+        end: '+=120%',
+        pin: banner,
+        pinSpacing: true,
+        scrub: true,
+        anticipatePin: 1
+      }
+    });
+
+    flapWords.forEach((word, i) => {
+      const start = i * 0.18;
+      const end = Math.min(1.0, start + 0.55);
+      const dur = end - start;
+
+      tl.fromTo(
+        word,
+        {
+          rotateX: -80,
+          opacity: 0
+        },
+        {
+          rotateX: 0,
+          opacity: 1,
+          duration: dur,
+          ease: 'power1.out'
+        },
+        start
+      );
+    });
+  } else {
+    // Robust RAF scroll-scrub fallback
+    function onScrollScrub() {
+      if (motionOff || reducedMotion.matches) {
+        setDirect();
+        return;
+      }
+      const rect = container.getBoundingClientRect();
+      const total = container.offsetHeight - window.innerHeight;
+      if (total <= 0) return;
+      const progress = Math.min(1, Math.max(0, -rect.top / total));
+
+      flapWords.forEach((word, i) => {
+        const start = i * 0.18;
+        const end = Math.min(1.0, start + 0.55);
+        const p = Math.min(1, Math.max(0, (progress - start) / (end - start)));
+        const rot = -80 * (1 - p);
+        word.style.transform = `rotateX(${rot}deg)`;
+        word.style.opacity = String(p);
+      });
+    }
+    window.addEventListener('scroll', onScrollScrub, { passive: true });
+    onScrollScrub();
+  }
+})();
+
 

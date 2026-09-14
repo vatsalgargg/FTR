@@ -64,8 +64,20 @@ html.motion-off{scroll-behavior:auto}.motion-off *{animation:none!important;tran
 .pill,
 .plain-link,
 .footer-nav > a { overflow: visible; }
+.pill-label {
+  display: inline-flex;
+  align-items: center;
+  font-size: inherit;
+  white-space: nowrap;
+  letter-spacing: inherit;
+}
+.pill > span:not(.pill-label):not(.wl) {
+  font-size: 15px; /* only the arrow icon */
+}
 .wl {
   display: inline-block;
+  font-size: inherit;
+  letter-spacing: inherit;
   will-change: transform;
   /* Vertical overflow must not clip the rising letters */
   backface-visibility: hidden;
@@ -73,5 +85,81 @@ html.motion-off{scroll-behavior:auto}.motion-off *{animation:none!important;tran
 @media (prefers-reduced-motion: reduce) {
   .wl { will-change: auto; }
 }
+
+/* ── Footer Link Underlines (matching reference) ────────────────────────── */
+.footer-nav > a {
+  text-decoration: underline;
+  text-underline-offset: 6px;
+  text-decoration-thickness: 1px;
+}
+.footer-contact > a:not(.footer-logo) {
+  text-decoration: underline;
+  text-underline-offset: 5px;
+  text-decoration-thickness: 1px;
+}
+
+/* ── Scroll-Scrubbed Split-Flap CTA ──────────────────────────────────────── */
+.contact-pinned-wrapper {
+  position: relative;
+  width: 100%;
+}
+.flap-heading-container {
+  perspective: 600px;
+  -webkit-perspective: 600px;
+  display: block;
+  width: 100%;
+  text-align: center;
+  margin: 0 auto;
+}
+.flap-heading {
+  margin: 0;
+  font-family: 'Mona Sans Narrow', Impact, sans-serif;
+  font-weight: 700;
+  font-size: clamp(58px, 7.3vw, 118px);
+  line-height: 1.02;
+  text-transform: uppercase;
+  letter-spacing: -0.01em;
+  transform-style: preserve-3d;
+}
+.flap-line {
+  display: block;
+  white-space: nowrap;
+}
+.flap-word {
+  display: inline-block;
+  transform-origin: 50% 100%;
+  transform-style: preserve-3d;
+  will-change: transform, opacity;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  margin-inline: 0.12em;
+  transform: rotateX(-80deg);
+  opacity: 0;
+}
+.flap-word.flap-white {
+  color: #ffffff !important;
+}
+.flap-word.flap-gray {
+  color: #8d8d92 !important;
+}
+@media (max-width: 760px) {
+  .flap-heading {
+    font-size: clamp(43px, 9.6vw, 65px);
+  }
+  .flap-line {
+    white-space: normal;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .flap-word {
+    transform: none !important;
+    opacity: 1 !important;
+  }
+}
+.motion-off .flap-word {
+  transform: none !important;
+  opacity: 1 !important;
+}
+
 
 
