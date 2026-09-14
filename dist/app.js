@@ -135,49 +135,82 @@ function updateTileVisibility() { root.classList.toggle('page-hidden', document.
 document.addEventListener('visibilitychange', updateTileVisibility);
 updateTileVisibility();
 
-// ─── Nav pill wave hover ────────────────────────────────────────────────────
-// Each letter in .nav-links > a gets its own <span> so we can stagger
-// individual Web Animations API keyframes (left → right ripple).
-(function initNavWave() {
-  const STAGGER   = 35;   // ms between each letter's start
-  const DURATION  = 500;  // total animation length per letter (ms)
-  const RISE      = -7;   // px — how high each letter floats
-  const SCALE_TOP = 1.15; // peak scale at the apex
 
-  // Split the text of each nav link into individual letter spans.
-  document.querySelectorAll('.nav-links > a').forEach(link => {
-    // Preserve the original plain-text label for aria so screen readers
-    // still read the full word rather than wrapped spans.
-    if (!link.dataset.waveReady) {
-      const text = link.textContent;
-      link.dataset.waveReady = '1';
-      link.setAttribute('aria-label', text.trim());
-      link.innerHTML = [...text].map(ch =>
-        `<span class="wl" aria-hidden="true">${ch === ' ' ? '\u00a0' : ch}</span>`
-      ).join('');
+// ─── Universal wave hover ───────────────────────────────────────────────────
+// Applies a per-letter staggered translateY + scale ripple to:
+//   • nav pill links       (.nav-links > a)
+//   • all pill buttons/links (.pill)
+//   • plain-text CTA links  (.plain-link)
+//   • footer nav links      (.footer-nav > a)
+//
+// Child ELEMENT nodes (e.g. the ↗ arrow <span>) are preserved as-is so only
+// the actual letter characters participate in the wave.
+(function initWaveHover() {
+  const STAGGER   = 35;    // ms between each letter
+  const DURATION  = 500;   // ms total per letter animation
+  const RISE      = -7;    // px upward travel
+  const SCALE_TOP = 1.15;  // scale at the apex
+
+  const SELECTORS = [
+    '.nav-links > a',
+    '.pill',
+    '.plain-link',
+    '.footer-nav > a',
+  ].join(',');
+
+  // Split an element's content into per-letter .wl spans, preserving any
+  // child element nodes (like arrow icon spans) completely untouched.
+  function prepare(el) {
+    if (el.dataset.waveReady) return;
+    el.dataset.waveReady = '1';
+
+    // Capture full text for screen readers before we touch the DOM.
+    el.setAttribute('aria-label', el.textContent.trim());
+
+    // Snapshot child nodes then rebuild the element's content.
+    const nodes = [...el.childNodes];
+    el.innerHTML = '';
+
+    for (const node of nodes) {
+      if (node.nodeType === Node.TEXT_NODE) {
+        // Split every character in the text node into its own .wl span.
+        for (const ch of node.textContent) {
+          const s = document.createElement('span');
+          s.className = 'wl';
+          s.setAttribute('aria-hidden', 'true');
+          s.textContent = ch === ' ' ? '\u00a0' : ch;
+          el.appendChild(s);
+        }
+      } else {
+        // Element node (e.g. <span>↗</span>) — re-attach unchanged.
+        el.appendChild(node);
+      }
     }
+  }
 
-    link.addEventListener('mouseenter', () => {
+  function attachHover(el) {
+    el.addEventListener('mouseenter', () => {
       if (motionOff || reducedMotion.matches) return;
 
-      const spans = link.querySelectorAll('.wl');
+      // Only animate letter spans — not icon child elements.
+      const spans = el.querySelectorAll('.wl');
       spans.forEach((span, i) => {
-        // Cancel any in-flight animation on this letter for a clean restart.
-        span.getAnimations().forEach(a => a.cancel());
-
+        span.getAnimations().forEach(a => a.cancel()); // clean restart
         span.animate(
           [
-            { transform: 'translateY(0px) scale(1)',                   easing: 'ease-in-out' },
-            { transform: `translateY(${RISE}px) scale(${SCALE_TOP})`,  easing: 'ease-in-out', offset: 0.45 },
+            { transform: 'translateY(0px) scale(1)',                  easing: 'ease-in-out' },
+            { transform: `translateY(${RISE}px) scale(${SCALE_TOP})`, easing: 'ease-in-out', offset: 0.45 },
             { transform: 'translateY(0px) scale(1)' }
           ],
-          {
-            duration: DURATION,
-            delay:    i * STAGGER,
-            fill:     'none'  // letter snaps back cleanly after the animation
-          }
+          { duration: DURATION, delay: i * STAGGER, fill: 'none' }
         );
       });
     });
+  }
+
+  document.querySelectorAll(SELECTORS).forEach(el => {
+    prepare(el);
+    attachHover(el);
   });
 })();
+

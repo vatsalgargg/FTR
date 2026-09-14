@@ -60,7 +60,10 @@ html.motion-off{scroll-behavior:auto}.motion-off *{animation:none!important;tran
 /* ── Nav wave-letter spans ─────────────────────────────────────────────────
    Each letter is wrapped in an inline-block so CSS/WAAPI transforms apply.
    overflow:visible on the parent link lets letters float above the pill. */
-.nav-links > a { overflow: visible; }
+.nav-links > a,
+.pill,
+.plain-link,
+.footer-nav > a { overflow: visible; }
 .wl {
   display: inline-block;
   will-change: transform;
@@ -70,4 +73,5 @@ html.motion-off{scroll-behavior:auto}.motion-off *{animation:none!important;tran
 @media (prefers-reduced-motion: reduce) {
   .wl { will-change: auto; }
 }
+
 
