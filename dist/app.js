@@ -177,8 +177,10 @@ updateTileVisibility();
 
     for (const node of nodes) {
       if (node.nodeType === Node.TEXT_NODE) {
+        const text = node.textContent.trim();
+        if (!text) continue;
         // Split every character in the text node into its own .wl span.
-        for (const ch of node.textContent) {
+        for (const ch of text) {
           const s = document.createElement('span');
           s.className = 'wl';
           s.setAttribute('aria-hidden', 'true');

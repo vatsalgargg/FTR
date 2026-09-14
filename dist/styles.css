@@ -64,20 +64,30 @@ html.motion-off{scroll-behavior:auto}.motion-off *{animation:none!important;tran
 .pill,
 .plain-link,
 .footer-nav > a { overflow: visible; }
+.pill {
+  width: fit-content;
+  max-width: fit-content;
+}
 .pill-label {
   display: inline-flex;
   align-items: center;
-  font-size: inherit;
+  font-size: inherit !important;
   white-space: nowrap;
-  letter-spacing: inherit;
+  letter-spacing: inherit !important;
+  gap: 0 !important;
+}
+.pill span.pill-label,
+.pill span.wl {
+  font-size: inherit !important;
+  letter-spacing: inherit !important;
 }
 .pill > span:not(.pill-label):not(.wl) {
   font-size: 15px; /* only the arrow icon */
 }
 .wl {
   display: inline-block;
-  font-size: inherit;
-  letter-spacing: inherit;
+  font-size: inherit !important;
+  letter-spacing: inherit !important;
   will-change: transform;
   /* Vertical overflow must not clip the rising letters */
   backface-visibility: hidden;
