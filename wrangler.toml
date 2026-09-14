@@ -1,5 +1,3 @@
 name = "ftr"
 compatibility_date = "2026-09-01"
-
-[assets]
-directory = "./dist"
+pages_build_output_dir = "dist"
