@@ -1,0 +1,7 @@
+source/
+qa/
+.vibecode-security/
+.sites-runtime/
+node_modules/
+*.zip
+*.log
