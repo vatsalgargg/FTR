@@ -155,6 +155,7 @@ updateTileVisibility();
     '.nav-links > a',
     '.pill',
     '.plain-link',
+    '.footer-nav > a',
   ].join(',');
 
   // Split an element's content into per-letter .wl spans, grouping all letters

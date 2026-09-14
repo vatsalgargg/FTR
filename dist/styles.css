@@ -111,13 +111,13 @@ html.motion-off{scroll-behavior:auto}.motion-off *{animation:none!important;tran
 }
 
 .footer-contact > a:not(.footer-logo) {
-  display: inline-block;
+  display: block;
   width: fit-content;
   text-decoration: none !important;
   border-bottom: 1.5px solid currentColor;
   padding-bottom: 2px;
-  line-height: 1.35;
-  margin-bottom: 8px;
+  line-height: 1.4;
+  margin-bottom: 10px;
   transition: opacity 0.2s, border-color 0.2s;
 }
 .footer-contact > a:not(.footer-logo):hover {
