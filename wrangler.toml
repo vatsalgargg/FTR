@@ -1,5 +1,8 @@
 name = "ftr"
 compatibility_date = "2026-09-01"
+main = "./dist/_worker.js"
 
 [assets]
 directory = "./dist"
+binding = "ASSETS"
+run_worker_first = true

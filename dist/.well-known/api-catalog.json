@@ -1,0 +1,23 @@
+{
+  "linkset": [
+    {
+      "anchor": "https://ftrgroup.in/",
+      "service-doc": [
+        {
+          "href": "https://ftrgroup.in/llms.txt",
+          "type": "text/plain"
+        }
+      ],
+      "describedby": [
+        {
+          "href": "https://ftrgroup.in/sitemap.xml",
+          "type": "application/xml"
+        },
+        {
+          "href": "https://ftrgroup.in/llms.txt",
+          "type": "text/markdown"
+        }
+      ]
+    }
+  ]
+}

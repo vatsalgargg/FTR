@@ -1,0 +1,22 @@
+# FTR — First Time Resolver
+
+> IT solutions and services across India. Sourcing, systems integration, facility management, and annual maintenance since 2010.
+
+FTR (First Time Resolver Pvt. Ltd.) brings together IT sales, hardware and software integration, and ongoing support. We start with business needs and build dependable solutions across hardware, software, networking, and workplace technology.
+
+## Solutions
+
+- [IT Infrastructure & Sourcing](https://ftrgroup.in/#services): Computers, laptops, servers, network switches, peripherals, and global materials sourcing.
+- [Systems Integration](https://ftrgroup.in/#services): Connect platforms, applications, and data into a cohesive environment. Architecture and solution design.
+- [Facility Management Services](https://ftrgroup.in/#services): Server, network and desktop support, IT asset management, and surveillance systems.
+- [Annual Maintenance Contracts](https://ftrgroup.in/#services): Comprehensive coverage, proactive IT maintenance, operating system and application troubleshooting.
+
+## Company Details
+
+- Established: 2010 in Delhi NCR, now serving clients PAN India.
+- Track Record: 16+ years of service excellence.
+- Registered Office: Plot No. 124, J Block, Street No. 7, Ashok Vihar Phase 3 Extension, Gurugram, Haryana — 122001, India.
+- Contact Person: Laxman Yadav (laxman@ftresolver.com, +91 95550 76755)
+- Office Landline: +91 124 4799155
+- Canonical URL: https://ftrgroup.in/
+- Sitemap: https://ftrgroup.in/sitemap.xml
