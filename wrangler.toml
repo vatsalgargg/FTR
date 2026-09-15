@@ -1,6 +1,6 @@
 name = "ftr"
 compatibility_date = "2026-09-01"
-main = "./dist/_worker.js"
+main = "src/index.js"
 
 [assets]
 directory = "./dist"
