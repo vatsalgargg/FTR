@@ -7,12 +7,65 @@
  *    Spec: RFC 8288 & RFC 9727 Section 3
  */
 
-const LINK_HEADER = '</.well-known/api-catalog>; rel="api-catalog", </llms.txt>; rel="describedby", </llms.txt>; rel="service-doc"';
+const LINK_HEADER = '</.well-known/api-catalog>; rel="api-catalog", </llms.txt>; rel="service-desc", </llms.txt>; rel="service-doc", </llms.txt>; rel="describedby"';
+const SECURITY_HEADERS = {
+  "Content-Security-Policy": "default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; font-src 'self'; connect-src 'none'; object-src 'none'; base-uri 'self'; form-action 'none'; frame-ancestors 'none'; upgrade-insecure-requests",
+  "Cross-Origin-Opener-Policy": "same-origin",
+  "Cross-Origin-Resource-Policy": "same-origin",
+  "Permissions-Policy": "camera=(), microphone=(), geolocation=(), payment=(), usb=()",
+  "Referrer-Policy": "strict-origin-when-cross-origin",
+  "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+  "X-Content-Type-Options": "nosniff",
+  "X-Frame-Options": "DENY",
+  "X-Permitted-Cross-Domain-Policies": "none",
+};
+
+function logSecurityEvent(type, request, details = {}) {
+  const url = new URL(request.url);
+  // Do not record query strings, IP addresses, cookies, authorization data or bodies.
+  console.log(JSON.stringify({
+    type,
+    method: request.method,
+    path: url.pathname,
+    country: request.cf?.country || "unknown",
+    rayId: request.headers.get("cf-ray") || "unknown",
+    ...details,
+  }));
+}
+
+function secureResponse(response, request, extraHeaders = {}) {
+  const headers = new Headers(response.headers);
+  for (const [name, value] of Object.entries(SECURITY_HEADERS)) headers.set(name, value);
+  for (const [name, value] of Object.entries(extraHeaders)) headers.set(name, value);
+
+  if (response.status >= 400) {
+    logSecurityEvent("http_error", request, { status: response.status });
+  }
+
+  return new Response(response.body, {
+    status: response.status,
+    statusText: response.statusText,
+    headers,
+  });
+}
 
 export default {
   async fetch(request, env) {
     const url = new URL(request.url);
     const accept = request.headers.get("Accept") || "";
+
+    if (url.protocol === "http:" && url.hostname !== "localhost" && url.hostname !== "127.0.0.1") {
+      url.protocol = "https:";
+      return Response.redirect(url.toString(), 308);
+    }
+
+    if (request.method !== "GET" && request.method !== "HEAD") {
+      logSecurityEvent("blocked_method", request);
+      return secureResponse(new Response("Method Not Allowed", {
+        status: 405,
+        headers: { Allow: "GET, HEAD", "Cache-Control": "no-store" },
+      }), request);
+    }
 
     const isPageRequest =
       url.pathname === "/" ||
@@ -30,7 +83,7 @@ export default {
       const bytes = encoder.encode(markdown);
       const tokenCount = Math.ceil(bytes.length / 4);
 
-      return new Response(markdown, {
+      return secureResponse(new Response(request.method === "HEAD" ? null : markdown, {
         status: 200,
         headers: {
           "Content-Type": "text/markdown; charset=utf-8",
@@ -39,32 +92,31 @@ export default {
           "x-markdown-tokens": String(tokenCount),
           "Cache-Control": "public, max-age=0, must-revalidate",
         },
-      });
+      }), request);
     }
 
-    // 2. Fetch static asset
-    let response;
-    if (env && env.ASSETS) {
-      response = await env.ASSETS.fetch(request);
-    } else {
-      response = await fetch(request);
-    }
+    try {
+      // 2. Fetch static asset
+      const response = env?.ASSETS
+        ? await env.ASSETS.fetch(request)
+        : await fetch(request);
 
-    // Inject Link header and Vary: Accept for page requests
-    if (isPageRequest && response.status === 200) {
-      const newHeaders = new Headers(response.headers);
-      if (!newHeaders.has("Link")) {
-        newHeaders.set("Link", LINK_HEADER);
+      // Inject Link header and Vary: Accept for page requests.
+      if (isPageRequest && response.status === 200) {
+        return secureResponse(response, request, {
+          Link: response.headers.get("Link") || LINK_HEADER,
+          Vary: "Accept",
+        });
       }
-      newHeaders.set("Vary", "Accept");
-      return new Response(response.body, {
-        status: response.status,
-        statusText: response.statusText,
-        headers: newHeaders,
-      });
-    }
 
-    return response;
+      return secureResponse(response, request);
+    } catch (error) {
+      logSecurityEvent("asset_error", request, { message: error instanceof Error ? error.name : "unknown" });
+      return secureResponse(new Response("Internal Server Error", {
+        status: 500,
+        headers: { "Cache-Control": "no-store" },
+      }), request);
+    }
   },
 };
 

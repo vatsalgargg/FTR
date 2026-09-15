@@ -8,6 +8,12 @@
           "type": "text/plain"
         }
       ],
+      "service-desc": [
+        {
+          "href": "https://ftrgroup.in/llms.txt",
+          "type": "text/plain"
+        }
+      ],
       "describedby": [
         {
           "href": "https://ftrgroup.in/sitemap.xml",
@@ -15,7 +21,7 @@
         },
         {
           "href": "https://ftrgroup.in/llms.txt",
-          "type": "text/markdown"
+          "type": "text/plain"
         }
       ]
     }
