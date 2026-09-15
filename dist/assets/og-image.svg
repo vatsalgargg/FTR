@@ -1,0 +1,60 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#070b14"/>
+      <stop offset="100%" style="stop-color:#0b1321"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="75%" cy="45%" r="40%">
+      <stop offset="0%" style="stop-color:#1a4a8a;stop-opacity:0.8"/>
+      <stop offset="100%" style="stop-color:#070b14;stop-opacity:0"/>
+    </radialGradient>
+  </defs>
+  <!-- Background -->
+  <rect width="1200" height="630" fill="url(#bg)"/>
+  <rect width="1200" height="630" fill="url(#glow)"/>
+  <!-- Grid lines -->
+  <g stroke="#8baeff" stroke-opacity="0.04" stroke-width="1">
+    <line x1="0" y1="90" x2="1200" y2="90"/>
+    <line x1="0" y1="180" x2="1200" y2="180"/>
+    <line x1="0" y1="270" x2="1200" y2="270"/>
+    <line x1="0" y1="360" x2="1200" y2="360"/>
+    <line x1="0" y1="450" x2="1200" y2="450"/>
+    <line x1="0" y1="540" x2="1200" y2="540"/>
+    <line x1="90" y1="0" x2="90" y2="630"/>
+    <line x1="270" y1="0" x2="270" y2="630"/>
+    <line x1="450" y1="0" x2="450" y2="630"/>
+    <line x1="630" y1="0" x2="630" y2="630"/>
+    <line x1="810" y1="0" x2="810" y2="630"/>
+    <line x1="990" y1="0" x2="990" y2="630"/>
+  </g>
+  <!-- Network nodes -->
+  <g fill="#5f93ff" fill-opacity="0.6">
+    <circle cx="820" cy="200" r="8"/><circle cx="950" cy="150" r="5"/>
+    <circle cx="1050" cy="260" r="7"/><circle cx="900" cy="320" r="5"/>
+    <circle cx="1100" cy="180" r="4"/><circle cx="780" cy="340" r="6"/>
+    <circle cx="1020" cy="400" r="5"/>
+  </g>
+  <!-- Network lines -->
+  <g stroke="#5f93ff" stroke-opacity="0.3" stroke-width="1.5" fill="none">
+    <line x1="820" y1="200" x2="950" y2="150"/>
+    <line x1="950" y1="150" x2="1050" y2="260"/>
+    <line x1="1050" y1="260" x2="900" y2="320"/>
+    <line x1="820" y1="200" x2="900" y2="320"/>
+    <line x1="950" y1="150" x2="1100" y2="180"/>
+    <line x1="1050" y1="260" x2="1020" y2="400"/>
+    <line x1="900" y1="320" x2="780" y2="340"/>
+  </g>
+  <!-- Left accent line -->
+  <rect x="60" y="120" width="4" height="60" fill="#5f93ff" opacity="0.8"/>
+  <!-- FTR Logo Text -->
+  <text x="80" y="230" font-family="Arial Black, Impact, sans-serif" font-weight="900" font-size="130" fill="white" letter-spacing="-4" opacity="0.97">FTR</text>
+  <!-- Company name -->
+  <text x="82" y="270" font-family="Courier New, monospace" font-size="18" fill="#8baeff" letter-spacing="4">FIRST TIME RESOLVER</text>
+  <!-- Tagline -->
+  <text x="82" y="340" font-family="Arial, sans-serif" font-size="26" fill="#c5d5e8" font-weight="400">IT Services &amp; Solutions</text>
+  <text x="82" y="378" font-family="Arial, sans-serif" font-size="22" fill="#8998b0">Gurugram, India &nbsp;·&nbsp; Since 2010</text>
+  <!-- Bottom bar -->
+  <rect x="0" y="580" width="1200" height="50" fill="#5f93ff" opacity="0.08"/>
+  <text x="82" y="612" font-family="Courier New, monospace" font-size="16" fill="#8baeff" letter-spacing="2">ftrgroup.in</text>
+  <text x="1118" y="612" font-family="Arial, sans-serif" font-size="14" fill="#8baeff" text-anchor="end">IT AMC &amp; Systems Integration</text>
+</svg>
