@@ -10,9 +10,6 @@
   Content-Type: text/plain; charset=utf-8
   Access-Control-Allow-Origin: *
 
-/
-  Link: </.well-known/api-catalog>; rel="api-catalog", </llms.txt>; rel="describedby", </llms.txt>; rel="service-doc"
-
 /*
   X-Content-Type-Options: nosniff
   Referrer-Policy: strict-origin-when-cross-origin
