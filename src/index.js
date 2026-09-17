@@ -109,6 +109,19 @@ export default {
         });
       }
 
+      // Handle 404: serve custom 404.html if available
+      if (response.status === 404 && env?.ASSETS) {
+        const notFoundUrl = new URL("/404.html", request.url);
+        const notFoundResponse = await env.ASSETS.fetch(new Request(notFoundUrl.toString(), request));
+        if (notFoundResponse.status === 200) {
+          return secureResponse(new Response(notFoundResponse.body, {
+            status: 404,
+            statusText: "Not Found",
+            headers: notFoundResponse.headers,
+          }), request);
+        }
+      }
+
       return secureResponse(response, request);
     } catch (error) {
       logSecurityEvent("asset_error", request, { message: error instanceof Error ? error.name : "unknown" });

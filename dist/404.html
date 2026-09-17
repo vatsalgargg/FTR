@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>404 — Page Not Found | FTR</title>
+  <meta name="description" content="The requested page could not be found. Return to First Time Resolver (FTR).">
+  <meta name="robots" content="noindex, follow">
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%23070b14'/%3E%3Cpath d='M15 13h35v10H27v10h20v10H27v14H15z' fill='%236299ff'/%3E%3C/svg%3E">
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    .notfound-wrap {
+      min-height: 100svh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 40px 20px;
+      position: relative;
+      isolation: isolate;
+      background: radial-gradient(circle at 50% 40%, #10213b 0%, #070b14 70%, #04070d 100%);
+    }
+    .notfound-code {
+      font-family: MonaNarrow, Impact, sans-serif;
+      font-size: clamp(80px, 16vw, 160px);
+      line-height: 1;
+      letter-spacing: -4px;
+      color: #ffffff;
+      text-shadow: 0 0 35px rgba(95, 147, 255, 0.4);
+      margin-bottom: 8px;
+    }
+    .notfound-tag {
+      font-family: Mono, monospace;
+      font-size: clamp(11px, 2vw, 13px);
+      letter-spacing: 3px;
+      color: #5f93ff;
+      text-transform: uppercase;
+      margin-bottom: 20px;
+    }
+    .notfound-desc {
+      max-width: 440px;
+      color: #9ba8bc;
+      font-size: 15px;
+      line-height: 1.6;
+      margin-bottom: 35px;
+    }
+    .notfound-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      padding: 14px 28px;
+      background: #5f93ff;
+      color: #ffffff;
+      border-radius: 999px;
+      font-size: 13px;
+      font-weight: 600;
+      text-decoration: none;
+      transition: transform 0.25s, background 0.25s;
+    }
+    .notfound-btn:hover {
+      background: #3c7bf9;
+      transform: translateY(-2px);
+    }
+  </style>
+</head>
+<body>
+  <main class="notfound-wrap">
+    <div class="notfound-code">404</div>
+    <div class="notfound-tag">SYSTEM // ROUTE NOT FOUND</div>
+    <p class="notfound-desc">The requested resource or page does not exist or has been relocated within the network.</p>
+    <a href="/" class="notfound-btn">RETURN TO HOME &nbsp;→</a>
+  </main>
+</body>
+</html>
