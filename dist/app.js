@@ -8,3 +8,25 @@ if('IntersectionObserver'in window){const observer=new IntersectionObserver(entr
 // Add a lightweight reveal only after the static page has rendered, keeping no-JS content visible.
 const revealTargets=[...document.querySelectorAll('.section-pad h2,.section-top>p,.about-grid p,.contact-grid>div,.timeline article,.service-grid article')];
 if(!reduced.matches&&'IntersectionObserver'in window){const revealObserver=new IntersectionObserver(entries=>entries.forEach(entry=>{if(entry.isIntersecting){entry.target.classList.add('reveal-visible');revealObserver.unobserve(entry.target)}}),{threshold:.14,rootMargin:'0px 0px -7%'});revealTargets.forEach((element,index)=>{element.classList.add('reveal');if(index%3===1)element.classList.add('reveal-delay-1');if(index%3===2)element.classList.add('reveal-delay-2');revealObserver.observe(element)})}
+
+// Manage graceful custom preloader dismiss
+(() => {
+  const loader = document.getElementById('ftr-loader');
+  if (!loader) return;
+  const hideLoader = () => {
+    if (loader.classList.contains('loader-hide')) return;
+    loader.classList.add('loader-hide');
+    setTimeout(() => {
+      if (loader.parentNode) loader.parentNode.removeChild(loader);
+    }, 700);
+  };
+
+  // Dismiss on window load with slight delay so user perceives smooth transition
+  if (document.readyState === 'complete') {
+    setTimeout(hideLoader, 450);
+  } else {
+    window.addEventListener('load', () => setTimeout(hideLoader, 450));
+    // Safe fallback in case any slow external resource holds up 'load'
+    setTimeout(hideLoader, 2000);
+  }
+})();

@@ -110,3 +110,199 @@
 
 /* Liquid-glass navigation: the desktop bar opens softly around its existing links. */
 .header{background:linear-gradient(115deg,rgba(54,92,145,.76),rgba(19,42,75,.66) 55%,rgba(55,103,160,.58));border:1px solid rgba(188,220,255,.3);box-shadow:0 14px 38px rgba(0,0,0,.26),inset 0 1px 0 rgba(255,255,255,.25);backdrop-filter:blur(20px) saturate(145%);-webkit-backdrop-filter:blur(20px) saturate(145%);transition:width .52s var(--ease),min-height .52s var(--ease),padding .52s var(--ease),background .52s var(--ease),box-shadow .52s var(--ease)}.nav-links{padding:4px;border:1px solid rgba(222,237,255,.18);border-radius:999px;background:rgba(7,15,29,.2);box-shadow:inset 0 1px 0 rgba(255,255,255,.14)}.nav-links a{background:rgba(236,245,255,.1);border:1px solid transparent;transition:transform .32s var(--ease),background .32s,border-color .32s,box-shadow .32s}.nav-links a:hover{background:rgba(255,255,255,.22);border-color:rgba(235,247,255,.38);color:#fff;box-shadow:0 8px 17px rgba(2,12,28,.2);transform:translateY(-1px)}.menu-toggle{background:rgba(7,15,29,.22);border:1px solid rgba(222,237,255,.18);box-shadow:inset 0 1px 0 rgba(255,255,255,.14)}@media(min-width:961px) and (hover:hover) and (pointer:fine){.header{width:min(calc(100% - clamp(4rem,10vw,10rem)),80rem);min-height:4rem}.header:hover{width:min(calc(100% - clamp(2rem,5vw,5rem)),86rem);min-height:4.7rem;padding-top:.8rem;padding-bottom:.8rem;background:linear-gradient(115deg,rgba(66,111,171,.84),rgba(24,55,95,.75) 55%,rgba(65,119,183,.67));box-shadow:0 20px 48px rgba(0,0,0,.34),inset 0 1px 0 rgba(255,255,255,.32)}}@media(max-width:700px){.header{background:linear-gradient(115deg,rgba(44,78,123,.88),rgba(14,31,54,.84));backdrop-filter:blur(16px) saturate(135%);-webkit-backdrop-filter:blur(16px) saturate(135%)}}
+
+/* Custom Tech Neural Preloader */
+.ftr-loader {
+  position: fixed;
+  inset: 0;
+  z-index: 99999;
+  background: radial-gradient(circle at 50% 45%, #0e1a2f 0%, #070b14 70%, #04070d 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 1;
+  visibility: visible;
+  transition: opacity 0.65s cubic-bezier(0.22, 1, 0.36, 1), visibility 0.65s ease;
+  pointer-events: all;
+}
+
+.ftr-loader.loader-hide {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.ftr-loader-core {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 240px;
+  height: 240px;
+}
+
+.ftr-loader-rings {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+}
+
+.loader-ring {
+  position: absolute;
+  border-radius: 50%;
+  pointer-events: none;
+}
+
+.loader-ring.outer {
+  width: 130px;
+  height: 130px;
+  border: 1.5px solid rgba(95, 147, 255, 0.18);
+  border-top-color: #5f93ff;
+  border-right-color: rgba(95, 147, 255, 0.6);
+  animation: ftrSpinOuter 2.2s cubic-bezier(0.45, 0.05, 0.55, 0.95) infinite;
+  box-shadow: 0 0 25px rgba(95, 147, 255, 0.22);
+}
+
+.loader-ring.middle {
+  width: 104px;
+  height: 104px;
+  border: 1.5px dashed rgba(120, 179, 255, 0.35);
+  border-bottom-color: #8bb7ff;
+  animation: ftrSpinInner 3.2s linear infinite reverse;
+}
+
+.loader-ring.inner {
+  width: 82px;
+  height: 82px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-left-color: #ffffff;
+  animation: ftrSpinOuter 1.5s ease-in-out infinite;
+}
+
+.loader-pulse {
+  position: absolute;
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(95, 147, 255, 0.35) 0%, rgba(95, 147, 255, 0) 70%);
+  animation: ftrPulseGlow 2s ease-in-out infinite alternate;
+}
+
+.ftr-loader-symbol {
+  position: relative;
+  z-index: 2;
+  width: 46px;
+  height: 46px;
+  display: grid;
+  place-items: center;
+  color: #ffffff;
+  filter: drop-shadow(0 0 10px rgba(95, 147, 255, 0.6));
+}
+
+.ftr-loader-symbol svg {
+  width: 100%;
+  height: 100%;
+}
+
+.ftr-svg-path {
+  animation: ftrPathShimmer 2s ease-in-out infinite alternate;
+}
+
+.ftr-svg-node {
+  animation: ftrNodeBlink 1.4s ease-in-out infinite alternate;
+}
+
+.ftr-svg-node.n2 { animation-delay: 0.35s; }
+.ftr-svg-node.n3 { animation-delay: 0.7s; }
+
+.ftr-loader-text {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  margin-top: 155px;
+}
+
+.ftr-loader-title {
+  font-family: MonaNarrow, Impact, sans-serif;
+  font-size: 16px;
+  letter-spacing: 2px;
+  color: #ffffff;
+  font-weight: 700;
+  text-shadow: 0 0 12px rgba(95, 147, 255, 0.5);
+}
+
+.ftr-loader-sub {
+  font-family: Mono, monospace;
+  font-size: 9px;
+  letter-spacing: 2.2px;
+  color: #79a5f2;
+  opacity: 0.85;
+  animation: ftrTextFlicker 1.8s ease-in-out infinite alternate;
+}
+
+.ftr-loader-track {
+  position: relative;
+  z-index: 2;
+  width: 110px;
+  height: 2px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 99px;
+  overflow: hidden;
+  margin-top: 12px;
+}
+
+.ftr-loader-bar {
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, #5f93ff 50%, #b8d4ff 100%);
+  border-radius: 99px;
+  transform: translateX(-100%);
+  animation: ftrBarFlow 1.6s ease-in-out infinite;
+}
+
+@keyframes ftrSpinOuter {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+@keyframes ftrSpinInner {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+@keyframes ftrPulseGlow {
+  0% { transform: scale(0.85); opacity: 0.3; }
+  100% { transform: scale(1.4); opacity: 0.8; }
+}
+
+@keyframes ftrPathShimmer {
+  0% { fill: #ffffff; }
+  100% { fill: #82aeff; }
+}
+
+@keyframes ftrNodeBlink {
+  0% { opacity: 0.4; transform: scale(0.8); }
+  100% { opacity: 1; transform: scale(1.25); filter: drop-shadow(0 0 4px #5f93ff); }
+}
+
+@keyframes ftrTextFlicker {
+  0%, 100% { opacity: 0.7; }
+  50% { opacity: 1; }
+}
+
+@keyframes ftrBarFlow {
+  0% { transform: translateX(-100%); }
+  50% { transform: translateX(0%); }
+  100% { transform: translateX(100%); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .loader-ring, .loader-pulse, .ftr-loader-bar, .ftr-svg-node {
+    animation: none !important;
+  }
+}
