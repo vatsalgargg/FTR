@@ -78,7 +78,7 @@
       for(let n=0;n<3;n++){ctx.strokeRect(x-7,y-8+n*6,14,4);}
       if(!mobile){ctx.font='9px Mono,monospace';ctx.textAlign='center';ctx.fillStyle='#9bb6cc';ctx.fillText(label,x,y+31);}
     });
-    if(!mobile){ctx.font='10px Mono,monospace';ctx.textAlign='center';ctx.fillStyle='#7493b2';ctx.fillText('INTERCONNECTED INTELLIGENCE',cx,cy+radius*1.38);}
+    if(!mobile){const intelligenceY=Math.min(cy+radius*1.2,height-94);ctx.font='10px Mono,monospace';ctx.textAlign='center';ctx.fillStyle='#7493b2';ctx.fillText('INTERCONNECTED INTELLIGENCE',cx,intelligenceY);}
   }
   function tick(now) {
     raf = 0;
