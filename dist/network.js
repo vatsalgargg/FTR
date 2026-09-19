@@ -4,10 +4,13 @@
   const ctx = canvas?.getContext('2d');
   if (!ctx) return;
   const host = canvas.closest('.hero');
-  let width = 0, height = 0, raf = 0, last = 0, time = 0, visible = true;
+  let width = 0, height = 0, raf = 0, last = 0, time = 0, visible = true, scrolling = false, scrollTimer = 0;
   let mx = 0, my = 0, targetX = 0, targetY = 0;
-  const points = Array.from({length: 180}, (_, i) => {
-    const y = 1 - 2 * (i + .5) / 180, angle = i * 2.39996;
+  const compact = matchMedia('(max-width: 700px)').matches || (navigator.deviceMemory && navigator.deviceMemory <= 4);
+  const pointCount = compact ? 96 : 144;
+  const fieldCount = compact ? 36 : 60;
+  const points = Array.from({length: pointCount}, (_, i) => {
+    const y = 1 - 2 * (i + .5) / pointCount, angle = i * 2.39996;
     const radius = i % 4 === 0 ? .62 : 1;
     return {x: Math.cos(angle)*Math.sqrt(1-y*y)*radius,
       y:y*radius, z:Math.sin(angle)*Math.sqrt(1-y*y)*radius};
@@ -23,19 +26,19 @@
     if (!width || !height) return;
     const mobile=width<700, radius=Math.min(width*(mobile?.62:.235),height*.36);
     // A quiet full-width network ties the copy and neural core into one environment.
-    const field = Array.from({length: 60}, (_, i) => ({
-      x: ((i % 10 + .5) / 10) * width + Math.sin(i * 2.4 + time * .12) * 14 + mx * 10,
-      y: ((Math.floor(i / 10) + .5) / 6) * height + Math.cos(i * 1.7 + time * .1) * 18 + my * 8
-    }));
+    const columns = compact ? 6 : 10;
+    const rows = Math.ceil(fieldCount / columns);
+    const fieldX = i => ((i % columns + .5) / columns) * width + Math.sin(i * 2.4 + time * .12) * 14 + mx * 10;
+    const fieldY = i => ((Math.floor(i / columns) + .5) / rows) * height + Math.cos(i * 1.7 + time * .1) * 18 + my * 8;
     ctx.lineWidth=.65;
-    field.forEach((a,i)=>{
-      for(const j of [i%10<9?i+1:-1,i+10<60?i+10:-1,i%10<9&&i+11<60?i+11:-1]){
+    for(let i=0;i<fieldCount;i++){
+      const ax=fieldX(i),ay=fieldY(i);
+      for(const j of [i%columns<columns-1?i+1:-1,i+columns<fieldCount?i+columns:-1,i%columns<columns-1&&i+columns+1<fieldCount?i+columns+1:-1]){
         if(j<0)continue;
-        const b=field[j];ctx.strokeStyle='rgba(83,148,208,.12)';
-        ctx.beginPath();ctx.moveTo(a.x,a.y);ctx.lineTo(b.x,b.y);ctx.stroke();
+        ctx.strokeStyle='rgba(83,148,208,.12)';ctx.beginPath();ctx.moveTo(ax,ay);ctx.lineTo(fieldX(j),fieldY(j));ctx.stroke();
       }
-      ctx.fillStyle='rgba(119,192,246,.3)';ctx.beginPath();ctx.arc(a.x,a.y,1.4,0,Math.PI*2);ctx.fill();
-    });
+      ctx.fillStyle='rgba(119,192,246,.3)';ctx.beginPath();ctx.arc(ax,ay,1.4,0,Math.PI*2);ctx.fill();
+    }
     const cx=width*(mobile?.68:.75), cy=height*.51;
     const angle=time*.065+mx*.7, pitch=my*.45-.15;
     const project=({x,y,z})=>{
@@ -70,7 +73,7 @@
     labels.forEach((label,i)=>{
       const phase=i*Math.PI/2+.45;
       const x=cx+Math.cos(phase)*radius*1.22,y=cy+Math.sin(phase)*radius*.94;
-      const a=projected[i*38+7];
+      const a=projected[(i*Math.floor(pointCount/4)+7)%pointCount];
       ctx.strokeStyle='#6596c94d';ctx.setLineDash([3,5]);ctx.beginPath();ctx.moveTo(a.x,a.y);ctx.lineTo(x,y);ctx.stroke();ctx.setLineDash([]);
       ctx.fillStyle='#091524';ctx.strokeStyle='#71b5ed90';ctx.lineWidth=1;
       ctx.fillRect(x-14,y-14,28,28);ctx.strokeRect(x-14,y-14,28,28);
@@ -82,7 +85,7 @@
   }
   function tick(now) {
     raf = 0;
-    if (!visible || document.hidden || paused()) { last = 0; return; }
+    if (!visible || document.hidden || paused() || scrolling) { last = 0; return; }
     const dt = Math.min((now - (last || now)) / 1000, .05); last = now; time += dt;
     const ease = 1 - Math.exp(-dt * 4);
     mx += (targetX-mx)*ease; my += (targetY-my)*ease;
@@ -91,7 +94,7 @@
   function sync() {
     cancelAnimationFrame(raf); raf=0; last=0;
     render();
-    if (visible && !document.hidden && !paused()) raf=requestAnimationFrame(tick);
+    if (visible && !document.hidden && !paused() && !scrolling) raf=requestAnimationFrame(tick);
   }
   new ResizeObserver(() => {
     width=host.clientWidth; height=host.clientHeight;
@@ -102,6 +105,7 @@
   new IntersectionObserver(([entry])=>{visible=entry.isIntersecting;sync()}).observe(host);
   new MutationObserver(sync).observe(document.documentElement,{attributes:true,attributeFilter:['class']});
   document.addEventListener('visibilitychange',sync);
+  addEventListener('scroll',()=>{scrolling=true;clearTimeout(scrollTimer);scrollTimer=setTimeout(()=>{scrolling=false;sync()},120)},{passive:true});
   host.addEventListener('pointermove',e=>{
     const r=host.getBoundingClientRect();
     targetX=(e.clientX-r.left)/r.width-.5; targetY=(e.clientY-r.top)/r.height-.5;
