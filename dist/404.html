@@ -3,52 +3,36 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>404 — Page Not Found | FTR — First Time Resolver</title>
-  <meta name="description" content="The requested page could not be found. Return to First Time Resolver (FTR) — IT Solutions and Services across India.">
+  <title>Page not found | FTR — First Time Resolver</title>
+  <meta name="description" content="The requested page could not be found. Return to FTR — First Time Resolver, IT solutions and services across India.">
   <meta name="robots" content="noindex, follow">
-  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%23070b14'/%3E%3Cpath d='M15 13h35v10H27v10h20v10H27v14H15z' fill='%236299ff'/%3E%3C/svg%3E">
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%23070b14'/%3E%3Cpath d='M15 13h35v10H27v10h20v10H15z' fill='%236299ff'/%3E%3C/svg%3E">
   <link rel="stylesheet" href="/styles.css">
 </head>
 <body class="notfound-body">
-  <main class="notfound-scene">
+  <main class="notfound-scene" id="main">
     <div class="notfound-grid-bg" aria-hidden="true"></div>
+    <header class="notfound-header">
+      <a class="notfound-brand" href="/" aria-label="FTR home">FTR <span></span><small>FIRST TIME RESOLVER</small></a>
+      <a class="notfound-home-link" href="/">HOME <b aria-hidden="true">↗</b></a>
+    </header>
 
-    <div class="notfound-card">
-      <div class="notfound-badge">
-        <i></i> SYSTEM DIAGNOSTIC // 404
-      </div>
-
-      <div class="notfound-glitch-wrap">
-        <div class="notfound-code-big">404</div>
-      </div>
-
-      <h1 class="notfound-h2">CONNECTION <span>LOST</span></h1>
-      <p class="notfound-msg">The route you are trying to reach is not mapped on our network or has been relocated to another node.</p>
-
+    <section class="notfound-content" aria-labelledby="notfound-title">
+      <p class="notfound-kicker"><i></i> 404 / PAGE NOT FOUND</p>
+      <div class="notfound-code" aria-hidden="true">404</div>
+      <h1 id="notfound-title">THIS PAGE<br><span>ISN’T AVAILABLE.</span></h1>
+      <p class="notfound-message">The address may have changed, or the page may no longer exist. Use one of the links below to continue with FTR.</p>
       <div class="notfound-actions">
-        <a href="/" class="notfound-btn-primary">
-          RETURN TO HOMEPAGE <span class="arrow" aria-hidden="true"></span>
-        </a>
-        <a href="/#contact" class="notfound-btn-secondary">
-          CONTACT SUPPORT
-        </a>
+        <a class="notfound-primary" href="/">GO TO HOMEPAGE <b aria-hidden="true">→</b></a>
+        <a class="notfound-secondary" href="/#contact">CONTACT FTR <b aria-hidden="true">↗</b></a>
       </div>
+    </section>
 
-      <div class="notfound-links-grid">
-        <a href="/#services" class="notfound-quick-link">
-          <span>Our Solutions</span>
-          <small>01 // DISCOVER</small>
-        </a>
-        <a href="/#journey" class="notfound-quick-link">
-          <span>Company Journey</span>
-          <small>02 // 16 YEARS</small>
-        </a>
-        <a href="/#about" class="notfound-quick-link">
-          <span>About FTR</span>
-          <small>03 // OVERVIEW</small>
-        </a>
-      </div>
-    </div>
+    <nav class="notfound-routes" aria-label="Helpful links">
+      <a href="/#about"><small>01</small><span>Company</span><b aria-hidden="true">↗</b></a>
+      <a href="/#services"><small>02</small><span>Solutions</span><b aria-hidden="true">↗</b></a>
+      <a href="/#journey"><small>03</small><span>Our journey</span><b aria-hidden="true">↗</b></a>
+    </nav>
   </main>
 </body>
 </html>
