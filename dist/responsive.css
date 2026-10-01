@@ -94,3 +94,37 @@ footer{gap:1.5rem}footer p{font-size:.75rem;max-width:100%;line-height:1.7}foote
  .hero h1{font-size:clamp(2.4rem,10.5vw,4rem);margin-bottom:1.5rem}.hero .eyebrow{font-size:.6rem;gap:.6rem;line-height:1.8}
  .hero .lead br{display:none}.hero-actions{gap:.75rem 1.25rem}.hero-foot{min-height:72px}
 }
+
+/* HIG audit: readable content and controls in every scroll state. */
+.surface h2 span{color:#356bd6}
+.hero-actions .pill{color:#0b1321}
+.partners h2,.timeline h3{max-width:100%;word-break:normal;overflow-wrap:normal}
+.stats span{margin-left:0;margin-inline-start:8px}
+.plain-link,.contact-grid a,footer a{display:inline-flex;align-items:center;min-width:44px;min-height:44px}
+.contact-grid a{display:flex;width:fit-content;max-width:100%}
+footer p a{padding-inline:4px}
+.hero .eyebrow,.hero-foot,.brand-caption,.contact-grid small,
+.principle-ports button small,.principle-readout small,.process-screen>small,
+.process-output small,.journey-stage small,.contact-composer>small,
+.partner-readout small,.partner-number,.journey-route b,.process-diagram b,
+.module-label,.approach aside small,.brand-strip p{font-size:11px;line-height:1.6}
+.hero .eyebrow{flex-wrap:wrap;letter-spacing:.06em}
+.principle-readout small,.process-screen>small,.process-output small,
+.partner-readout small,.partner-number{color:#486981}
+.principle-ports button small{color:inherit}
+.process-rail button{color:#3f5f78}.process-rail button[aria-pressed=true]{color:#c6e9ff}
+.journey-years button{color:#9cb4c8}
+.partner-number{background:#f5f8fb;padding-inline:3px}
+@media(min-width:961px){
+ .header .nav-links,.header.glass-light .nav-links{background:rgba(11,19,33,.9);color:#f4f8ff;border-color:#e1f1ff80;box-shadow:0 15px 34px #0003,inset 0 1px 0 #ffffff5e}
+ .header .nav-links a,.header.glass-light .nav-links a{color:#f4f8ff}
+ .header.glass-light .nav-links a:hover{background:#ffffff24}
+}
+@media(max-width:960px){
+ .header,.header.glass-light,.menu-panel,.header.glass-light~.menu-panel{background:rgba(11,19,33,.9);color:#f4f8ff;border-color:#d3e9ff61}
+ .header.glass-light .brand-caption{color:#c6ceda}
+ .header.glass-light .menu-toggle{color:#f4f8ff;background:#ecf7ff1a;border-color:#e8f6ff4d}
+ .header.glass-light~.menu-panel p,.header.glass-light~.menu-panel a span{color:#a0b3c9}
+ .brand-caption{max-width:9rem;white-space:normal}
+}
+@media(max-width:600px){.partners-title>span{display:block}.hero-foot{gap:.5rem}}
