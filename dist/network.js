@@ -7,7 +7,7 @@
   let width = 0, height = 0, raf = 0, last = 0, time = 0, visible = true, scrolling = false, scrollTimer = 0;
   let mx = 0, my = 0, targetX = 0, targetY = 0;
   const compact = matchMedia('(max-width: 700px)').matches || (navigator.deviceMemory && navigator.deviceMemory <= 4);
-  const pointCount = compact ? 96 : 144;
+  const pointCount = matchMedia('(max-width: 700px)').matches ? 96 : 144;
   const fieldCount = compact ? 36 : 60;
   const points = Array.from({length: pointCount}, (_, i) => {
     const y = 1 - 2 * (i + .5) / pointCount, angle = i * 2.39996;
@@ -18,7 +18,7 @@
   // Cache topology once; frame rendering only traverses the actual connections.
   const edges = [];
   points.forEach((a,i) => points.map((b,j)=>({j,d:Math.hypot(a.x-b.x,a.y-b.y,a.z-b.z)}))
-    .filter(b=>b.j!==i).sort((a,b)=>a.d-b.d).slice(0,4)
+    .filter(b=>b.j!==i).sort((a,b)=>a.d-b.d).slice(0,5)
     .forEach(({j})=>{if(j>i)edges.push([i,j])}));
   const paused = () => document.documentElement.classList.contains('motion-off');
   function render() {
