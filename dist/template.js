@@ -100,4 +100,24 @@
   function position() { frame=0; updateTravel(); let current=sections[0]; sections.forEach(section=>{if(section.getBoundingClientRect().top<=150)current=section;}); links.forEach(link=>{if(link.hash==='#'+current.id)link.setAttribute('aria-current','location');else link.removeAttribute('aria-current');}); }
   function schedule(){if(!frame)frame=requestAnimationFrame(position);}
   addEventListener('scroll',schedule,{passive:true}); addEventListener('resize',schedule,{passive:true}); toggle.addEventListener('click',schedule); reduced.addEventListener('change',schedule); position();
+  const metal = document.querySelector('.metal-panel');
+  if(metal) {
+    metal.classList.add('footer-waiting');
+    const footerObserver = new IntersectionObserver(entries => {
+      if(entries[0].isIntersecting){metal.classList.remove('footer-waiting');footerObserver.disconnect();}
+    },{threshold:.12});
+    footerObserver.observe(metal);
+    let metalFrame=0, pointerX=0, pointerY=0;
+    metal.addEventListener('pointermove',event=>{
+      if(off || reduced.matches || !finePointer.matches)return;
+      pointerX=event.clientX;pointerY=event.clientY;
+      if(metalFrame)return;
+      metalFrame=requestAnimationFrame(()=>{
+        metalFrame=0;
+        const rect=metal.getBoundingClientRect(), x=pointerX-rect.left,y=pointerY-rect.top;
+        metal.style.setProperty('--metal-x',`${x}px`);metal.style.setProperty('--metal-y',`${y}px`);
+        metal.style.setProperty('--metal-angle',`${Math.atan2(y-rect.height/2,x-rect.width/2)*180/Math.PI+90}deg`);
+      });
+    },{passive:true});
+  }
 })();
