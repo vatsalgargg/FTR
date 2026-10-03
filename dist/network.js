@@ -24,7 +24,7 @@
   function render() {
     ctx.clearRect(0, 0, width, height);
     if (!width || !height) return;
-    const mobile=width<700, radius=Math.min(width*(mobile?.62:.235),height*.36);
+    const mobile=width<700, radius=Math.min(width*(mobile?.42:.215),height*(mobile?.17:.30));
     // A quiet full-width network ties the copy and neural core into one environment.
     const columns = compact ? 6 : 10;
     const rows = Math.ceil(fieldCount / columns);
@@ -39,7 +39,7 @@
       }
       ctx.fillStyle='rgba(119,192,246,.3)';ctx.beginPath();ctx.arc(ax,ay,1.4,0,Math.PI*2);ctx.fill();
     }
-    const cx=width*(mobile?.68:.75), cy=height*.51;
+    const cx=width*(mobile?.5:.75), cy=height*(mobile?.66:.45);
     const angle=time*.065+mx*.7, pitch=my*.45-.15;
     const project=({x,y,z})=>{
       const rx=x*Math.cos(angle)-z*Math.sin(angle), rz=x*Math.sin(angle)+z*Math.cos(angle);
@@ -81,7 +81,7 @@
       for(let n=0;n<3;n++){ctx.strokeRect(x-7,y-8+n*6,14,4);}
       if(!mobile){ctx.font='9px Mono,monospace';ctx.textAlign='center';ctx.fillStyle='#9bb6cc';ctx.fillText(label,x,y+31);}
     });
-    if(!mobile){const intelligenceY=Math.min(cy+radius*1.2,height-94);ctx.font='10px Mono,monospace';ctx.textAlign='center';ctx.fillStyle='#7493b2';ctx.fillText('INTERCONNECTED INTELLIGENCE',cx,intelligenceY);}
+    if(!mobile){const intelligenceY=Math.min(cy+radius*1.2,height-160);ctx.font='10px Mono,monospace';ctx.textAlign='center';ctx.fillStyle='#7493b2';ctx.fillText('INTERCONNECTED INTELLIGENCE',cx,intelligenceY);}
   }
   function tick(now) {
     raf = 0;
