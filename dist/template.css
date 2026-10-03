@@ -100,3 +100,18 @@
 @media(max-width:600px){.metal-content{grid-template-columns:repeat(2,minmax(0,1fr));gap:24px}.metal-content>:last-child{grid-column:1/-1}.metal-links a{min-height:44px}.metal-panel .footer-bottom>div{gap:16px}.metal-panel .footer-bottom{gap:8px}.metal-cta{max-width:100%}}
 .motion-off .footer-enter{opacity:1;transform:none;transition:none}
 @media(prefers-reduced-motion:reduce){.footer-enter{opacity:1!important;transform:none!important;transition:none!important}}
+
+/* Readable content and comfortable controls across phone and laptop layouts. */
+.scroll-card{opacity:1!important}
+.brand>span{font-size:11px;line-height:14px}
+.header nav a{font-size:15px;min-height:44px;display:inline-flex;align-items:center}
+.button,.hero .button{font-size:15px;min-height:48px}
+.hero-top .tag,.hero-top small,.hero-stats small,.key-facts small,.card-copy>span,.brands small,.metal-intro>small,.metal-links small{font-size:12px;line-height:18px}
+.key-facts p,.card-copy p,.milestone p,.metal-intro p,.metal-links{font-size:16px;line-height:1.65}
+.card-copy ul,.feature dl>div,.contact-topics button{font-size:15px;line-height:1.65}
+.about h3,.card-copy h3,.milestone h3,.direct-lines h3{letter-spacing:-.02em}
+.direct-lines a,.text-link{display:inline-flex;align-items:center;min-height:44px}
+.direct-lines a{max-width:100%;font-size:clamp(20px,2vw,26px)}
+.metal-links a{min-height:44px}
+.footer-bottom,.metal-panel .footer-bottom{font-size:14px}
+@media(min-width:1141px){.card-copy p{min-height:4.95em}}
