@@ -5,7 +5,7 @@
 .cursor-dot:after{content:'';position:absolute;width:6px;height:6px;border-radius:50%;background:#fff;transform:translate(-50%,-50%)}
 .cursor-dot{transition:opacity .18s}
 .site-cursor.is-hover .cursor-dot{opacity:0}
-.site-cursor.is-image .cursor-shape{background:#ffffff08;border-color:#ffffffb3;box-shadow:inset 0 0 18px #ffffff0a}
+.site-cursor.is-image .cursor-shape{background:#fff;border-color:#fff;box-shadow:none}
 @media (hover:hover) and (pointer:fine){html.cursor-active,html.cursor-active a,html.cursor-active button,html.cursor-active [role=button]{cursor:none!important}}
 @media (prefers-reduced-motion:reduce),(hover:none),(pointer:coarse){.site-cursor{display:none}}
 @media (hover:hover) and (pointer:fine){.pill:hover{transform:none}}
