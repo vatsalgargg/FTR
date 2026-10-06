@@ -22,7 +22,10 @@
 .card-image .scroll-image{height:100%;width:100%}.service-card:hover .scroll-image{transform:translate3d(0,var(--pan,0px),0) scale(1.16)}
 .metric-bars .bar i{transform:scaleX(var(--travel,1));transition:none}
 .milestone.scroll-card{transform:translate3d(calc((1 - var(--travel,1))*65px),0,0);opacity:calc(.3 + var(--travel,1)*.7)}
-.feature{overflow:hidden}.feature>img.scroll-image{max-height:560px}
+.feature{overflow:hidden}.feature>div{min-width:0}
+.feature-media{position:relative;overflow:hidden;isolation:isolate;border-radius:22px;min-height:400px;aspect-ratio:1.25;align-self:stretch}
+.feature-media>img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+@media(max-width:600px){.feature-media{min-height:260px}}
 .motion-off .scroll-card{transform:none!important;opacity:1!important}.motion-off .scroll-image{transform:none!important}.motion-off .metric-bars .bar i{transform:none}
 @media(max-width:700px){.hero{min-height:1080px;padding:24px;justify-content:flex-start}.hero-top small{display:none}.hero-copy{max-width:100%;margin-top:34px;padding:0}.hero-copy h1{font-size:clamp(2.35rem,9.8vw,3.7rem)}.hero-copy p{font-size:15px}.hero-stats{margin-top:auto;padding-top:20px}.hero:after{background:linear-gradient(180deg,#07101b33,transparent 50%,#07101b33)}.scroll-card:nth-child(even){transform:translate3d(0,calc((1 - var(--travel,1))*70px),0) scale(calc(.96 + var(--travel,1)*.04))}.hero .actions{gap:10px}.hero .button{font-size:12px}.hero-top .tag{font-size:11px}}
 @media(prefers-reduced-motion:reduce){.scroll-card{transform:none!important;opacity:1!important}.scroll-image{transform:none!important}.metric-bars .bar i{transform:none!important}}
@@ -63,12 +66,12 @@
 .partner-grid>span{position:relative;isolation:isolate;overflow:hidden}
 .partner-grid>span:before,.partner-grid>span:after{content:'';position:absolute;pointer-events:none;opacity:0}
 .partner-grid>span:before{inset:12px;border:1px solid #367bd2;border-radius:7px;clip-path:polygon(0 0,24px 0,24px 1px,calc(100% - 24px) 1px,calc(100% - 24px) 0,100% 0,100% 24px,calc(100% - 1px) 24px,calc(100% - 1px) calc(100% - 24px),100% calc(100% - 24px),100% 100%,calc(100% - 24px) 100%,calc(100% - 24px) calc(100% - 1px),24px calc(100% - 1px),24px 100%,0 100%,0 calc(100% - 24px),1px calc(100% - 24px),1px 24px,0 24px);transform:scale(.88);transition:transform .55s var(--ease),opacity .3s}
-.partner-grid>span:after{inset:0;z-index:2;background:linear-gradient(110deg,transparent 35%,#72b9ff12 44%,#5eabff66 49.5%,#ffffffa6 50%,#72b9ff22 53%,transparent 64%);transform:translateX(-110%)}
+.partner-grid>span:after{inset:0;z-index:2;background:linear-gradient(110deg,transparent 35%,#72b9ff12 44%,#5eabff66 49.5%,#ffffffa6 50%,#72b9ff22 53%,transparent 64%);transform:translateX(-110%);transition:transform .85s var(--ease),opacity .3s}
 .partner-grid>span img{position:relative;z-index:1;transition:transform .6s var(--ease),filter .45s}
 @media(hover:hover) and (pointer:fine){
  .partner-grid>span:hover{background:#f5f9ff;box-shadow:inset 0 0 0 1px #87bfff,0 12px 32px #02091540}
  .partner-grid>span:hover:before{opacity:.9;transform:scale(1)}
- .partner-grid>span:hover:after{animation:partner-scan .95s var(--ease) both}
+ .partner-grid>span:hover:after{transform:translateX(110%);opacity:1}
  .partner-grid>span:hover img{filter:grayscale(0);transform:translateY(-3px) scale(1.06)}
 }
 @keyframes partner-scan{0%{opacity:0;transform:translateX(-110%)}15%{opacity:1}85%{opacity:1}100%{opacity:0;transform:translateX(110%)}}
@@ -115,3 +118,51 @@
 .metal-links a{min-height:44px}
 .footer-bottom,.metal-panel .footer-bottom{font-size:14px}
 @media(min-width:1141px){.card-copy p{min-height:4.95em}}
+
+/* Unfixed reference: masked double-roll letters, reading rhythm and lateral sweeps. */
+.roll-word{display:inline-block;white-space:nowrap}
+.roll-mask{display:inline-block;overflow:hidden;vertical-align:bottom;line-height:inherit}
+.roll-reel{position:relative;display:block;transform:translateY(calc(var(--glyph,0)*-200%))}
+.roll-copy{position:absolute;inset:100% 0 auto;display:block}
+.roll-last{top:200%}
+.reading-copy .read-word{opacity:.2;transition:opacity .6s var(--ease);transition-delay:var(--word-delay,0ms)}
+.reading-copy.copy-visible .read-word{opacity:1}
+.service-card.scroll-card{transform:perspective(1200px) translate3d(calc((1 - var(--travel,1))*110px),calc((1 - var(--travel,1))*180px),0) rotateX(calc((1 - var(--travel,1))*12deg)) rotateY(calc((1 - var(--travel,1))*-9deg)) scale(calc(.88 + var(--travel,1)*.12));transform-origin:50% 100%;transition:background .35s}
+.service-card.scroll-card:nth-child(even){transform:perspective(1200px) translate3d(calc((1 - var(--travel,1))*-110px),calc((1 - var(--travel,1))*220px),0) rotateX(calc((1 - var(--travel,1))*12deg)) rotateY(calc((1 - var(--travel,1))*9deg)) scale(calc(.88 + var(--travel,1)*.12))}
+.milestone.scroll-card{transform:translate3d(calc((1 - var(--travel,1))*50px),0,0)}
+.metric-bars article .bar{overflow:hidden;transform-origin:0 50%;transform:scaleX(var(--travel,1))}
+.card-image{overflow:hidden}.scroll-image{transform:translateY(var(--pan,0px)) scale(1.65);transition:none!important}
+.service-card .scroll-image{scale:1;transition:scale .5s var(--ease)!important}
+.service-card:hover .scroll-image{transform:translateY(var(--pan,0px)) scale(1.65)}
+@media(hover:hover) and (pointer:fine){.service-card:hover .scroll-image{scale:1.025}}
+.partner-grid>.scroll-card{transition:background .4s var(--ease),box-shadow .45s var(--ease)}
+.partner-grid>span.scroll-card:hover{transform:translate3d(0,calc((1 - var(--travel,1))*45px),0) scale(calc(.9 + var(--travel,1)*.1))}
+.service-card.scroll-card{transition:background .4s var(--ease);transition-delay:0s}
+@media(hover:hover) and (pointer:fine){
+ .cursor-active .service-card:hover{background:#112033}
+ .cursor-active .service-card:hover .scroll-image{scale:1}
+ .cursor-active .service-card.is-pointer-active{background:#172b42}
+ .cursor-active .service-card.is-pointer-active .scroll-image{scale:1.025}
+}
+/* Keep hit areas stationary; animate their contents instead. */
+@media(hover:hover) and (pointer:fine){.button:hover{transform:none}}
+.motion-off .service-card .scroll-image{scale:1!important;transition:none!important}
+@media(prefers-reduced-motion:reduce){.service-card .scroll-image{scale:1!important;transition:none!important}}
+.timeline.stack-enabled{gap:clamp(32px,9svh,90px);padding-bottom:25svh;align-items:start}
+.timeline.stack-enabled>.milestone{position:sticky;top:var(--stack-top,104px);z-index:calc(1 + var(--card-order,0));transform:translate3d(0,calc((1 - var(--travel,1))*120px),0) scale(calc(1 - var(--covered,0)*.08));transform-origin:50% 0;box-shadow:0 18px 38px #0003}
+@media(max-width:700px){
+ .card-image{aspect-ratio:1.6}
+ .service-grid{align-items:start;gap:clamp(28px,7svh,64px)}
+ .service-grid.stack-enabled{padding-bottom:24svh}
+ .service-grid.stack-enabled>.service-card{position:sticky;top:var(--stack-top,104px);z-index:calc(1 + var(--card-order,0))}
+ .service-card.scroll-card,.service-card.scroll-card:nth-child(even){transform:perspective(1200px) translate3d(0,calc((1 - var(--travel,1))*160px),0) rotateX(calc((1 - var(--travel,1))*12deg)) scale(calc(.9 + var(--travel,1)*.1 - var(--covered,0)*.065));transform-origin:50% 0;box-shadow:0 18px 38px #0003}
+}
+.motion-off .roll-reel{transform:none!important}.motion-off .roll-copy{visibility:hidden}
+.motion-off .read-word{opacity:1!important;transition:none!important}
+.motion-off .scroll-card,.motion-off .scroll-image,.motion-off .metric-bars article .bar{transform:none!important}
+.stack-measuring>.scroll-card{position:static!important}
+@media(prefers-reduced-motion:reduce){
+ .roll-reel{transform:none!important}.roll-copy{visibility:hidden}
+ .read-word{opacity:1!important;transition:none!important}
+ .scroll-card,.scroll-image,.metric-bars article .bar{transform:none!important}
+}

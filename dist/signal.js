@@ -44,11 +44,12 @@
     });
     if(!label.textContent)return;
     link.prepend(label);
+    const letters=[...link.querySelectorAll('.wl')];
     const play=()=>{
       if(off||!fine.matches)return;
-      link.querySelectorAll('.wl').forEach((letter,index)=>{
-        letter.getAnimations().forEach(animation=>animation.cancel());
-        letter.animate([{transform:'translateY(0) scale(1)'},{transform:'translateY(-7px) scale(1.14)',offset:.45},{transform:'translateY(0) scale(1)'}],{duration:500,delay:index*35});
+      if(letters.some(letter=>letter.getAnimations().length))return;
+      letters.forEach((letter,index)=>{
+        letter.animate([{transform:'translateY(0) scale(1)'},{transform:'translateY(-7px) scale(1.14)',offset:.45},{transform:'translateY(0) scale(1)'}],{duration:480,delay:index*160/Math.max(1,letters.length-1),easing:'cubic-bezier(.22,1,.36,1)'});
       });
     };
     link.addEventListener('pointerenter',play);

@@ -6,6 +6,8 @@
   const host = canvas.closest('.hero');
   let width = 0, height = 0, raf = 0, last = 0, time = 0, visible = true, scrolling = false, scrollTimer = 0;
   let mx = 0, my = 0, targetX = 0, targetY = 0;
+  let pointerX = 0, pointerY = 0, focusX = 0, focusY = 0, pointerInside = false, influence = 0;
+  const fine = matchMedia('(hover: hover) and (pointer: fine)');
   const compact = matchMedia('(max-width: 700px)').matches || (navigator.deviceMemory && navigator.deviceMemory <= 4);
   const pointCount = matchMedia('(max-width: 700px)').matches ? 96 : 144;
   const fieldCount = compact ? 36 : 60;
@@ -50,11 +52,27 @@
     const glow=ctx.createRadialGradient(cx,cy,0,cx,cy,radius*1.4);
     glow.addColorStop(0,'#143d6840');glow.addColorStop(.6,'#16466c20');glow.addColorStop(1,'#07101c00');
     ctx.fillStyle=glow;ctx.fillRect(cx-radius*1.4,cy-radius*1.4,radius*2.8,radius*2.8);
-    const projected=points.map(project);
+    const reach=Math.max(90,radius*.55);
+    const projected=points.map(point=>{
+      const a=project(point),dx=focusX-a.x,dy=focusY-a.y;
+      const proximity=Math.max(0,1-Math.hypot(dx,dy)/reach);
+      a.hover=proximity*proximity*influence;
+      // A small elastic pull keeps the mesh intact while revealing nearby connections.
+      a.x+=dx*.08*a.hover;a.y+=dy*.08*a.hover;
+      return a;
+    });
+    if(influence>.001){
+      const halo=ctx.createRadialGradient(focusX,focusY,0,focusX,focusY,reach);
+      halo.addColorStop(0,`rgba(102,205,255,${influence*.16})`);
+      halo.addColorStop(1,'rgba(102,205,255,0)');
+      ctx.fillStyle=halo;ctx.fillRect(focusX-reach,focusY-reach,reach*2,reach*2);
+    }
     ctx.lineWidth=.8;
     edges.forEach(([i,j],k)=>{
       const a=projected[i],b=projected[j];
-      ctx.strokeStyle='rgba(98,167,239,'+Math.min(a.a,b.a)*.52+')';
+      const active=Math.max(a.hover,b.hover);
+      ctx.lineWidth=.8+active*1.4;
+      ctx.strokeStyle='rgba(125,199,255,'+Math.min(1,Math.min(a.a,b.a)*.52+active*.75)+')';
       ctx.beginPath();ctx.moveTo(a.x,a.y);ctx.lineTo(b.x,b.y);ctx.stroke();
       if(k%9===0){
         const t=(time*.24+k*.17)%1;
@@ -65,7 +83,7 @@
     });
     projected.forEach((a,i)=>{
       const hub=i%19===0;
-      ctx.fillStyle='rgba(154,219,255,'+a.a+')';ctx.beginPath();ctx.arc(a.x,a.y,(hub?3.4:1.45)*a.p,0,Math.PI*2);ctx.fill();
+      ctx.fillStyle='rgba(184,237,255,'+Math.min(1,a.a+a.hover*.7)+')';ctx.beginPath();ctx.arc(a.x,a.y,(hub?3.4:1.45)*a.p+a.hover*2.6,0,Math.PI*2);ctx.fill();
       if(hub){ctx.strokeStyle='#83c5ff60';ctx.beginPath();ctx.arc(a.x,a.y,7*a.p,0,Math.PI*2);ctx.stroke();}
     });
     // Thin orbital routing paths connect the neural core to distinct computing layers.
@@ -85,16 +103,19 @@
   }
   function tick(now) {
     raf = 0;
-    if (!visible || document.hidden || paused() || scrolling) { last = 0; return; }
-    const dt = Math.min((now - (last || now)) / 1000, .05); last = now; time += dt;
-    const ease = 1 - Math.exp(-dt * 4);
+    if (!visible || document.hidden || paused() || (scrolling && !fine.matches)) { last = 0; return; }
+    const dt = Math.min(last ? (now-last)/1000 : 1/60, .05); last = now; time += dt;
+    const ease = 1 - Math.exp(-dt * 9);
     mx += (targetX-mx)*ease; my += (targetY-my)*ease;
+    const follow=1-Math.exp(-dt*25), fade=1-Math.exp(-dt*(pointerInside?16:8));
+    focusX+=(pointerX-focusX)*follow;focusY+=(pointerY-focusY)*follow;
+    influence+=((pointerInside?1:0)-influence)*fade;
     render(); raf = requestAnimationFrame(tick);
   }
   function sync() {
     cancelAnimationFrame(raf); raf=0; last=0;
     render();
-    if (visible && !document.hidden && !paused() && !scrolling) raf=requestAnimationFrame(tick);
+    if (visible && !document.hidden && !paused() && (!scrolling || fine.matches)) raf=requestAnimationFrame(tick);
   }
   new ResizeObserver(() => {
     width=host.clientWidth; height=host.clientHeight;
@@ -103,12 +124,20 @@
     ctx.setTransform(dpr,0,0,dpr,0,0); sync();
   }).observe(host);
   new IntersectionObserver(([entry])=>{visible=entry.isIntersecting;sync()}).observe(host);
-  new MutationObserver(sync).observe(document.documentElement,{attributes:true,attributeFilter:['class']});
+  let wasPaused=paused();
+  new MutationObserver(()=>{const next=paused();if(next!==wasPaused){wasPaused=next;if(next){influence=0;release();}sync();}}).observe(document.documentElement,{attributes:true,attributeFilter:['class']});
   document.addEventListener('visibilitychange',sync);
-  addEventListener('scroll',()=>{scrolling=true;clearTimeout(scrollTimer);scrollTimer=setTimeout(()=>{scrolling=false;sync()},120)},{passive:true});
+  addEventListener('scroll',()=>{release();if(fine.matches)return;scrolling=true;clearTimeout(scrollTimer);scrollTimer=setTimeout(()=>{scrolling=false;sync()},120)},{passive:true});
   host.addEventListener('pointermove',e=>{
+    if(e.pointerType!=='mouse'||!fine.matches||paused())return;
     const r=host.getBoundingClientRect();
+    pointerX=e.clientX-r.left;pointerY=e.clientY-r.top;
+    if(!pointerInside && influence<.001){focusX=pointerX;focusY=pointerY;}
+    pointerInside=!e.target.closest('a,button,.hero-copy,.hero-top,.hero-stats');
     targetX=(e.clientX-r.left)/r.width-.5; targetY=(e.clientY-r.top)/r.height-.5;
   },{passive:true});
-  host.addEventListener('pointerleave',()=>{targetX=targetY=0});
+  function release(){pointerInside=false;targetX=targetY=0;}
+  host.addEventListener('pointerleave',release);
+  addEventListener('blur',release);
+  fine.addEventListener('change',()=>{release();sync();});
 })();
