@@ -8,6 +8,9 @@
 @media(hover:hover) and (pointer:fine){.service-card:hover{background:#172b42}.service-card:nth-child(even){transition-delay:60ms}}
 @media(max-width:600px){.hero:after{background:linear-gradient(0deg,#06101cf5,#06101c44 80%),linear-gradient(90deg,#06101c88,transparent)}}
 @supports(animation-timeline:view()){@media(prefers-reduced-motion:no-preference){.hero-image{animation:hero-drift linear both;animation-timeline:view();animation-range:exit 0% exit 100%}@keyframes hero-drift{to{transform:translateY(12%) scale(1.08)}}}}
+/* Adjacent company/solutions sections share a compact vertical gap. */
+.section.about{padding-bottom:clamp(24px,3vw,48px)}
+#services{padding-top:clamp(24px,3vw,48px)}
 /* Restored interactive neural globe, with compact copy and a dedicated mobile stage. */
 .hero{min-height:680px;min-height:clamp(650px,calc(100svh - 105px),850px);background:radial-gradient(ellipse at 75% 48%,#143c60aa,transparent 58%),#07101b;justify-content:space-between}
 .hero .network-scene{position:absolute;inset:0;width:100%;height:100%;z-index:-2;pointer-events:none}
