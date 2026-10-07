@@ -52,47 +52,7 @@
   // One-shot section entrances preserve readable content when returning up the page.
   // Heading masks provide their own entrance; never hide their entire parent.
   document.querySelectorAll('.reveal').forEach(el => el.classList.remove('pending'));
-  const titles = [...document.querySelectorAll('h1,h2,.card-copy h3,.milestone h3,.process-copy h3')];
-  const titleState = new Map();
-  titles.forEach(title => {
-    title.setAttribute('aria-label', title.innerText.replace(/\s+/g,' ').trim());
-    title.classList.add('rolling-title');
-    let index = 0;
-    const split = parent => [...parent.childNodes].forEach(node => {
-      if(node.nodeType !== 3) { if(node.nodeType === 1) split(node); return; }
-      const fragment = document.createDocumentFragment();
-      node.textContent.split(/(\s+)/).forEach(word => {
-        if(/^\s+$/.test(word)) {fragment.append(word);return;}
-        const group = document.createElement('span'); group.className = 'roll-word'; group.setAttribute('aria-hidden','true');
-        [...word].forEach(char => {
-          const mask = document.createElement('span'); mask.className = 'roll-mask';
-          const reel = document.createElement('span'); reel.className = 'roll-reel'; reel.textContent = char;
-          const copy = document.createElement('span'); copy.className = 'roll-copy'; copy.textContent = char;
-          const last = copy.cloneNode(true); last.classList.add('roll-last');
-          reel.append(copy,last); mask.append(reel); group.append(mask); mask.style.setProperty('--letter',index++);
-        });
-        fragment.append(group);
-      });
-      node.replaceWith(fragment);
-    });
-    split(title);
-    titleState.set(title,{progress:0,count:index,masks:[...title.querySelectorAll('.roll-mask')],drawn:null});
-  });
-  const copyObserver = new IntersectionObserver(entries=>entries.forEach(entry=>{
-    if(entry.isIntersecting){entry.target.classList.add('copy-visible');copyObserver.unobserve(entry.target);}
-  }),{rootMargin:'0px 0px -5% 0px',threshold:0});
-  document.querySelectorAll('.hero-copy p,.section-heading p,.about p,.feature p,.card-copy p,.milestone p,.closing p,.metal-intro p').forEach(paragraph=>{
-    paragraph.classList.add('reading-copy');
-    let index=0;
-    [...paragraph.childNodes].filter(node=>node.nodeType===3).forEach(node=>{
-      const fragment=document.createDocumentFragment();
-      node.textContent.split(/(\s+)/).forEach(word=>{
-        if(/^\s+$/.test(word)){fragment.append(word);return;}
-        const span=document.createElement('span');span.className='read-word';span.textContent=word;
-        span.style.setProperty('--word-delay',`${Math.min(index++*22,260)}ms`);fragment.append(span);
-      });node.replaceWith(fragment);
-    });copyObserver.observe(paragraph);
-  });
+  // Reading text stays native and visible; animate cards and imagery only.
   root.classList.add('motion-ready');
   const ticker = document.querySelector('.ticker>div');
   let tickerVisible = true;
@@ -145,20 +105,12 @@
   images.forEach(image => image.classList.add('scroll-image'));
   const moving = new Set();
   const travelObserver = new IntersectionObserver(entries => entries.forEach(entry => {if(entry.isIntersecting)moving.add(entry.target);else moving.delete(entry.target); schedule();}),{rootMargin:'150px'});
-  [...travelNodes,...images,...titles].forEach(node=>travelObserver.observe(node));
+  [...travelNodes,...images].forEach(node=>travelObserver.observe(node));
   const clamp = value => Math.max(0,Math.min(1,value));
   function updateTravel() {
     // Read every position before writing styles to avoid forced layouts during touch scrolling.
     const updates = [...moving].map(node => {
       let layoutTop=cardLayout.get(node)?.top??pageTop(node);
-      if(titleState.has(node)) {
-        const state=titleState.get(node), top=layoutTop-scrollY;
-        // Replay only after returning above a section; upward reading stays stable.
-        if(top>innerHeight+120)state.progress=0;
-        const progress=off || top<innerHeight*.9?1:0;
-        state.progress=Math.max(state.progress,progress);
-        return [node,'--roll',state.progress.toFixed(4)];
-      }
       if(node.classList.contains('scroll-image')) {
         const host=node.parentElement.getBoundingClientRect();
         const progress=clamp((innerHeight-host.top)/(innerHeight+host.height));
@@ -176,20 +128,6 @@
     updates.forEach(([node,key,value,cover])=>{
       node.style.setProperty(key,value);
       if(cover!==undefined)node.style.setProperty('--covered',cover.toFixed(3));
-      if(key==='--roll') {
-        const state=titleState.get(node);
-        if(state.drawn===value)return;
-        state.drawn=value;
-        node.style.setProperty('--glyph',value);
-        state.masks.forEach((mask,index)=>{
-          const reel=mask.firstElementChild;
-          reel.getAnimations().forEach(animation=>animation.cancel());
-          if(Number(value)===1 && !off)reel.animate([
-            {transform:'translateY(0)'}, {transform:'translateY(-200%)'}
-          ],{duration:1450,delay:state.count>1?index/(state.count-1)*480:0,
-            easing:'cubic-bezier(.22,1,.36,1)',fill:'backwards'});
-        });
-      }
     });
   }
   const links = [...document.querySelectorAll('.header nav a')];

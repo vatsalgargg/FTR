@@ -26,9 +26,8 @@
 .metric-bars .bar i{transform:scaleX(var(--travel,1));transition:none}
 .milestone.scroll-card{transform:translate3d(calc((1 - var(--travel,1))*65px),0,0);opacity:calc(.3 + var(--travel,1)*.7)}
 .feature{overflow:hidden}.feature>div{min-width:0}
-.feature-media{position:relative;overflow:hidden;isolation:isolate;border-radius:22px;min-height:400px;aspect-ratio:1.25;align-self:stretch}
+.feature-media{position:relative;overflow:hidden;isolation:isolate;border-radius:22px;width:100%;min-width:0;min-height:0;aspect-ratio:1.25;align-self:stretch}
 .feature-media>img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
-@media(max-width:600px){.feature-media{min-height:260px}}
 .motion-off .scroll-card{transform:none!important;opacity:1!important}.motion-off .scroll-image{transform:none!important}.motion-off .metric-bars .bar i{transform:none}
 @media(max-width:700px){.hero{min-height:1080px;padding:24px;justify-content:flex-start}.hero-top small{display:none}.hero-copy{max-width:100%;margin-top:34px;padding:0}.hero-copy h1{font-size:clamp(2.35rem,9.8vw,3.7rem)}.hero-copy p{font-size:15px}.hero-stats{margin-top:auto;padding-top:20px}.hero:after{background:linear-gradient(180deg,#07101b33,transparent 50%,#07101b33)}.scroll-card:nth-child(even){transform:translate3d(0,calc((1 - var(--travel,1))*70px),0) scale(calc(.96 + var(--travel,1)*.04))}.hero .actions{gap:10px}.hero .button{font-size:12px}.hero-top .tag{font-size:11px}}
 @media(prefers-reduced-motion:reduce){.scroll-card{transform:none!important;opacity:1!important}.scroll-image{transform:none!important}.metric-bars .bar i{transform:none!important}}
@@ -46,7 +45,7 @@
 .partner-grid>.scroll-card{transition:background .3s;transform:translate3d(0,calc((1 - var(--travel,1))*45px),0) scale(calc(.9 + var(--travel,1)*.1));opacity:calc(.5 + var(--travel,1)*.5)}
 @media(max-width:700px){
   .section{padding-block:clamp(48px,10vw,70px)}
-  .hero{min-height:clamp(1060px,140svh,1180px)}
+  .hero{min-height:clamp(880px,114svh,960px)}
   .hero .button,.button{font-size:14px;min-height:48px}
   .hero-copy p,.card-copy p,.process-copy p,.milestone p{font-size:16px;line-height:1.65}
   .card-copy ul{font-size:14px;line-height:1.65}
@@ -110,6 +109,7 @@
 /* Readable content and comfortable controls across phone and laptop layouts. */
 .scroll-card{opacity:1!important}
 .brand>span{font-size:11px;line-height:14px}
+.header .brand{min-height:44px}
 .header nav a{font-size:15px;min-height:44px;display:inline-flex;align-items:center}
 .button,.hero .button{font-size:15px;min-height:48px}
 .hero-top .tag,.hero-top small,.hero-stats small,.key-facts small,.card-copy>span,.brands small,.metal-intro>small,.metal-links small{font-size:12px;line-height:18px}
@@ -125,10 +125,10 @@
 /* Unfixed reference: masked double-roll letters, reading rhythm and lateral sweeps. */
 .roll-word{display:inline-block;white-space:nowrap}
 .roll-mask{display:inline-block;overflow:hidden;vertical-align:bottom;line-height:inherit}
-.roll-reel{position:relative;display:block;transform:translateY(calc(var(--glyph,0)*-200%))}
-.roll-copy{position:absolute;inset:100% 0 auto;display:block}
+.roll-reel{position:relative;display:block;transform:none!important}
+.roll-copy{display:none}
 .roll-last{top:200%}
-.reading-copy .read-word{opacity:.2;transition:opacity .6s var(--ease);transition-delay:var(--word-delay,0ms)}
+.reading-copy .read-word{opacity:1;transition:none}
 .reading-copy.copy-visible .read-word{opacity:1}
 .service-card.scroll-card{transform:perspective(1200px) translate3d(calc((1 - var(--travel,1))*110px),calc((1 - var(--travel,1))*180px),0) rotateX(calc((1 - var(--travel,1))*12deg)) rotateY(calc((1 - var(--travel,1))*-9deg)) scale(calc(.88 + var(--travel,1)*.12));transform-origin:50% 100%;transition:background .35s}
 .service-card.scroll-card:nth-child(even){transform:perspective(1200px) translate3d(calc((1 - var(--travel,1))*-110px),calc((1 - var(--travel,1))*220px),0) rotateX(calc((1 - var(--travel,1))*12deg)) rotateY(calc((1 - var(--travel,1))*9deg)) scale(calc(.88 + var(--travel,1)*.12))}
