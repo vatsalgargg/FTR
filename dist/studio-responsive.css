@@ -1,0 +1,43 @@
+/* Shared responsive corrections for the homepage and supporting pages. */
+.n-mobile{max-height:calc(100dvh - 84px);overflow-y:auto;overscroll-behavior:contain}
+.n-section>*{min-width:0}
+.service-trigger{line-height:1.35}
+.service-trigger>span:nth-child(2){overflow-wrap:break-word}
+.enquiry-topics button{min-height:44px}
+.n-contact a,.metal-links a{overflow-wrap:anywhere}
+.project-bottom h3{min-width:0}
+.page-shell .menu-panel{max-height:calc(100dvh - 100px);overflow-y:auto}
+.page-shell .document-content li,.page-shell .document-content strong{color:var(--text)}
+.page-shell .document-content a,.page-shell .document-content li::marker,.page-shell .page-footer [aria-current=page]{color:var(--accent)}
+.page-shell .document-index nav a{border-color:var(--line);min-height:44px}
+.page-shell .error-map-top span:last-child{color:var(--text)}
+@media(max-width:1100px){
+  .service-deck{height:auto}
+  .service-trigger{min-height:72px}
+}
+@media(max-width:700px){
+  .n-section h2{font-size:clamp(30px,8vw,48px)}
+  .n-section .reading{font-size:clamp(28px,8.8vw,35.2px);letter-spacing:-1px}
+  .n-hero{min-height:calc(100svh - 70px)}
+  .hero-bottom{margin-top:clamp(64px,12svh,110px)}
+  .hero-bottom p{font-size:16px}
+  .project-card{height:clamp(360px,65svh,500px)}
+  .project-bottom h3{max-width:calc(100% - 54px);font-size:clamp(18px,4.8vw,22px);overflow-wrap:break-word}
+  .project-arrow{flex-shrink:0}
+  .n-partner-grid img{max-width:100%;height:50px;object-fit:contain}
+  .metal-panel{padding:22px 20px}
+  .page-shell .document-content p,.page-shell .document-content li{font-size:16px;line-height:1.75}
+}
+@media(max-width:360px){
+  .n-section,.n-hero{padding-inline:16px}
+  .n-hero h1{font-size:35px;letter-spacing:-1.2px}
+  .n-actions{gap:8px}.n-actions .n-button{padding-inline:12px;font-size:14px}
+  .service-trigger{padding-inline:12px;font-size:16px;gap:8px}
+  .process-steps summary{gap:8px}.process-steps h3{font-size:17px}
+}
+@media(max-height:500px) and (orientation:landscape){
+  .n-mobile{inset-block-start:64px;max-height:calc(100dvh - 76px);padding:10px 20px}
+  .n-mobile a{padding-block:10px;min-height:44px}
+  .n-hero{height:auto;min-height:560px;padding-top:42px}
+  .hero-bottom{margin-top:64px}
+}

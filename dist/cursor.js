@@ -37,9 +37,19 @@
   }
   function hover(element) {
     if(element?.closest('input,textarea,select,[contenteditable="true"],iframe')) { hide(); return; }
-    const candidate = element?.closest('a,button,[role="button"]');
-    const control = candidate && !candidate.matches(':disabled,[aria-disabled="true"]') ? candidate : null;
-    const grid = element?.closest('.service-grid');
+    let candidate = element?.closest('a,button,[role="button"]');
+    // Keep one continuous hover surface across the navbar's small link gaps.
+    const navigation = element?.closest('.n-header nav,.header .nav-links,.n-actions');
+    if (!candidate && navigation) {
+      let nearest = Infinity;
+      navigation.querySelectorAll('a').forEach(link => {
+        const rect = link.getBoundingClientRect();
+        const distance = Math.hypot(x - (rect.left + rect.width / 2), y - (rect.top + rect.height / 2));
+        if (distance < nearest) { nearest = distance; candidate = link; }
+      });
+    }
+    const control = candidate && !candidate.matches('.project-card') && !candidate.matches(':disabled,[aria-disabled="true"]') ? candidate : null;
+    const grid = element?.closest('.service-grid,.project-list');
     let card=element?.closest('.service-card') || null;
     if(grid && !card) {
       let nearest=Infinity;
@@ -51,18 +61,19 @@
       });
     }
     setCard(card);
-    const image = !control && (grid || element?.closest('.partner-grid,.feature-media,.cta-image'));
+    const image = !control && (grid || element?.closest('.partner-grid,.feature-media,.cta-image,.n-partner-grid,.hero-photo,.service-body img'));
     const globe = !control && !image && !element?.closest('.hero-copy,.hero-top,.hero-stats') && element?.closest('.hero');
     const next = control || image || globe || null;
     // The whole grid is one cursor surface, including its gutters.
-    bounds = control ? control.getBoundingClientRect() : null;
-    if (next === target) return;
+    const controlRect = control ? control.getBoundingClientRect() : null;
+    bounds = controlRect && controlRect.width < 360 && controlRect.height < 100 ? controlRect : null;
     target = next;
     overlay.classList.toggle('is-hover', !!control || !!image);
     overlay.classList.toggle('is-image', !!image);
     overlay.classList.toggle('is-globe', !!globe);
-    shape.style.width = `${bounds ? bounds.width + 16 : image ? 84 : globe ? 56 : 36}px`;
-    shape.style.height = `${bounds ? bounds.height + 10 : image ? 84 : globe ? 56 : 36}px`;
+    overlay.classList.toggle('is-control', !!bounds);
+    shape.style.width = `${bounds ? bounds.width + 16 : image ? 84 : control || globe ? 56 : 36}px`;
+    shape.style.height = `${bounds ? bounds.height + 10 : image ? 84 : control || globe ? 56 : 36}px`;
   }
   function tick(now) {
     frame = 0;

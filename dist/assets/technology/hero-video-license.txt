@@ -1,0 +1,17 @@
+FTR homepage background video
+
+Source: https://www.pexels.com/video/close-up-of-a-cpu-7140928/
+Creator: MrColo (Pexels)
+Source file: https://videos.pexels.com/video-files/7140928/7140928-uhd_3840_2160_24fps.mp4
+License: Pexels License, https://www.pexels.com/license/
+Checked: 2026-10-10
+
+Pexels permits free commercial website use and modification; attribution is not
+required. Copyright remains with the rights holder. This is licensed stock
+footage, not public-domain footage or an endorsement of First Time Resolver.
+
+Original technical properties: 3840 x 2160, 24 fps, H.264, 9.39 seconds.
+Local derivatives: silent H.264 MP4 at 4K, 1080p and 720p; original frame rate,
+fast-start metadata and 0.75-second crossfade to make a 7.25-second loop.
+Poster is extracted from the first frame of the edited loop.
+Audio removed. Files are served locally; no third-party requests at runtime.
