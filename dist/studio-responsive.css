@@ -1,4 +1,17 @@
 /* Shared responsive corrections for the homepage and supporting pages. */
+.n-hero{height:auto;min-height:clamp(620px,calc(100svh - 78px),1000px);max-height:none}
+.n-header{padding-inline:max(24px,calc((100% - 1680px)/2))}
+.n-header nav{gap:clamp(12px,1.6vw,24px)}
+.n-header nav a{gap:clamp(12px,1.6vw,24px)}
+.n-actions,.hero-proof,.section-title>*,.journey-card,.process-steps,.n-direct{min-width:0}
+.n-section h2,.journey-card h3,.service-trigger>span,.process-steps h3{overflow-wrap:break-word}
+.n-mobile{top:78px}
+.n-header.compact+.n-mobile{top:64px}
+.service-deck{height:auto;min-height:450px}
+.service-trigger>span:first-child,.service-trigger b,.process-steps summary>span,.process-steps summary b{flex-shrink:0}
+.service-body li,.step-body li{max-width:100%;overflow-wrap:anywhere}
+.metal-content{grid-template-columns:minmax(0,2fr) minmax(0,1fr) minmax(0,1fr) minmax(0,1.25fr)}
+.page-shell .document-content,.page-shell .document-heading,.page-shell .error-copy{overflow-wrap:break-word}
 .n-mobile{max-height:calc(100dvh - 84px);overflow-y:auto;overscroll-behavior:contain}
 .n-section>*{min-width:0}
 .service-trigger{line-height:1.35}
@@ -12,10 +25,27 @@
 .page-shell .document-index nav a{border-color:var(--line);min-height:44px}
 .page-shell .error-map-top span:last-child{color:var(--text)}
 @media(max-width:1100px){
-  .service-deck{height:auto}
+  .n-header{padding-inline:24px}
+  .n-mobile{top:70px}
+  .n-header.compact+.n-mobile{top:64px}
+  .service-deck{height:auto;min-height:0}
   .service-trigger{min-height:72px}
+  .journey-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .section-title{gap:28px;align-items:start}
+  .section-title>div{flex:1}.section-title>p{flex:0 1 280px}
+}
+@media(max-width:1050px){.metal-content{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media(min-width:701px) and (max-width:900px){
+  .n-process,.n-contact{grid-template-columns:1fr}
+  .process-intro{position:static;display:grid;grid-template-columns:1fr 1fr;column-gap:30px}
+  .process-intro>.n-tag,.process-intro>h2{grid-column:1/-1;justify-self:start}
+  .process-principle{margin-top:24px}
+  .hero-bottom{flex-wrap:wrap;gap:28px}
 }
 @media(max-width:700px){
+  .n-header{padding-inline:16px}
+  .journey-grid{grid-template-columns:1fr}
+  .section-title>p{max-width:none}
   .n-section h2{font-size:clamp(30px,8vw,48px)}
   .n-section .reading{font-size:clamp(28px,8.8vw,35.2px);letter-spacing:-1px}
   .n-hero{min-height:calc(100svh - 70px)}
@@ -27,6 +57,11 @@
   .n-partner-grid img{max-width:100%;height:50px;object-fit:contain}
   .metal-panel{padding:22px 20px}
   .page-shell .document-content p,.page-shell .document-content li{font-size:16px;line-height:1.75}
+}
+@media(max-width:600px){.metal-content{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(hover:none),(pointer:coarse){
+  .project-card>img{will-change:auto}
+  .n-button,.enquiry-topics button,.service-trigger,.n-menu{touch-action:manipulation}
 }
 @media(max-width:360px){
   .n-section,.n-hero{padding-inline:16px}

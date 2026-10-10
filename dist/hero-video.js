@@ -11,12 +11,16 @@
   const allowed = () => visible && !document.hidden && !paused && !reduced.matches &&
     !document.documentElement.classList.contains('motion-off') && !connection?.saveData;
   async function selectSource() {
-    const phone = matchMedia('(max-width:700px)').matches;
-    let quality = phone ? '720' : '1080';
-    if (!phone && innerWidth * Math.min(devicePixelRatio, 2) >= 2500 && navigator.mediaCapabilities) {
+    // Keep the lightweight rendition when a phone rotates to landscape.
+    const phone = matchMedia('(max-width:700px)').matches ||
+      (matchMedia('(pointer:coarse)').matches && Math.min(screen.width, screen.height) <= 700);
+    const constrained = /(^|-)2g$/.test(connection?.effectiveType || '') ||
+      (typeof connection?.downlink === 'number' && connection.downlink < 3);
+    let quality = phone || constrained ? '720' : '1080';
+    if (!phone && !constrained && innerWidth * Math.min(devicePixelRatio, 2) >= 2500 && navigator.mediaCapabilities) {
       try {
         const result = await navigator.mediaCapabilities.decodingInfo({type:'file',video:{
-          contentType:'video/mp4; codecs="avc1.640033"',width:3840,height:2160,bitrate:8000000,framerate:24
+          contentType:'video/mp4; codecs="avc1.640033"',width:3840,height:2160,bitrate:18000000,framerate:24
         }});
         if (result.supported && result.smooth) quality = '4k';
       } catch { /* Older browsers receive the compatible 1080p film. */ }
