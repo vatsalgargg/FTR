@@ -1,0 +1,13 @@
+.orbit-loader{position:fixed;inset:0;z-index:10000;display:grid;place-items:center;background:var(--bg,#050505);color:var(--text,#fff);opacity:1;transition:opacity .5s ease;animation:orbit-failsafe 0s 6s forwards}
+.orbit-loader.is-leaving{opacity:0;pointer-events:none}
+.orbit-loader__scene{position:relative;display:flex;align-items:center;justify-content:center;width:100px;height:100px;perspective:780px}
+.orbit-loader__text{position:relative;z-index:10;font:700 46px/1 InterDisplay,Arial,sans-serif;letter-spacing:0;white-space:nowrap}
+.orbit-loader__ring{position:absolute;left:50%;top:50%;width:190px;height:190px;margin:-95px 0 0 -95px;box-sizing:border-box;border-radius:50%;will-change:transform}
+.orbit-loader__ring--one{border-bottom:5.70057px solid var(--accent,#fc4823);animation:orbit-one 1.15s linear infinite}
+.orbit-loader__ring--two{border-right:5.70057px solid var(--text,#fff);animation:orbit-two 1.15s .1s linear infinite}
+.orbit-loader__ring--three{border-top:5.70057px solid var(--muted,#aaa);animation:orbit-three 1.15s .15s linear infinite}
+@keyframes orbit-one{from{transform:rotateX(45deg) rotateY(-45deg) rotateZ(0deg)}to{transform:rotateX(45deg) rotateY(-45deg) rotateZ(360deg)}}
+@keyframes orbit-two{from{transform:rotateX(45deg) rotateY(45deg) rotateZ(0deg)}to{transform:rotateX(45deg) rotateY(45deg) rotateZ(360deg)}}
+@keyframes orbit-three{from{transform:rotateX(-60deg) rotateY(0deg) rotateZ(0deg)}to{transform:rotateX(-60deg) rotateY(0deg) rotateZ(360deg)}}
+@keyframes orbit-failsafe{to{visibility:hidden;pointer-events:none}}
+@media(prefers-reduced-motion:reduce){.orbit-loader{display:none}}
