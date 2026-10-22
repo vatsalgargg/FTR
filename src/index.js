@@ -166,7 +166,7 @@ Our commitment is simple: consistently meet or exceed customer expectations in q
 | Milestone | Value |
 |---|---|
 | Years of service excellence | 16 (2010–2026) |
-| Geographic reach | PAN India — sales, implementation & support |
+| Geographic reach | Across India — sales, implementation & support |
 | Partner model | ONE partner from sourcing to ongoing maintenance |
 
 ---
@@ -230,7 +230,7 @@ Good technology decisions start with listening. We work alongside your team to f
 | 2013 | Expanded to North India. Employee strength doubled in the first three years. |
 | 2016 | Grew into pan-India sales and services, with a larger team and customer base. |
 | 2019 | Turnover crossed ₹5 crore, with major automotive customers joining our portfolio. |
-| 2022 | Turnover crossed ₹10 crore and secured annual sales, maintenance and surveillance contracts. |
+| 2022 | Turnover crossed ₹10 crore, and we secured annual sales, maintenance and surveillance contracts. |
 | 2026 | 16 years of service — continuing our commitment to dependable solutions and customer support. |
 
 ---
