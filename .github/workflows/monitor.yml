@@ -1,0 +1,98 @@
+# Daily checks of the live site and the full git history. GitHub emails you when a scheduled run fails.
+name: Production monitor
+
+on:
+  schedule:
+    - cron: "17 3 * * *" # 08:47 IST
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: monitor
+  cancel-in-progress: false
+
+env:
+  NODE_VERSION: "24"
+  BASE_URL: https://ftrgroup.in
+
+jobs:
+  live:
+    name: Live site (HTTP, headers, TLS, drift from main)
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+      - run: npm ci --ignore-scripts --no-audit --no-fund
+      - name: HTTP smoke test (warns when production differs from main)
+        run: npm run check:live
+      - name: Install browsers
+        if: ${{ !cancelled() }}
+        run: npx playwright install --with-deps chromium webkit
+      - name: Real-browser test of production
+        if: ${{ !cancelled() }}
+        run: npx playwright test --project=desktop-chrome --project=mobile-safari
+      - if: failure()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: playwright-production
+          path: |
+            playwright-report/
+            test-results/
+          retention-days: 14
+
+  dependencies:
+    # New advisories are published without any change to this repository, so audit daily too.
+    name: New vulnerabilities in locked dependencies
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+      - run: npm ci --ignore-scripts --no-audit --no-fund
+      - run: npm audit --audit-level=low
+      - run: npx retire --path dist --severity low --exitwith 1
+
+  links:
+    name: Links on the live pages (internal and external)
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: lycheeverse/lychee-action@e7477775783ea5526144ba13e8db5eec57747ce8 # v2.9.0
+        with:
+          args: >-
+            --no-progress --max-retries 3 --retry-wait-time 5 --accept 200,206,429
+            --include-fragments --exclude "^tel:"
+            https://ftrgroup.in/ https://ftrgroup.in/privacy https://ftrgroup.in/terms https://ftrgroup.in/llms.txt
+          fail: true
+          jobSummary: true
+
+  history:
+    name: Secret scan of the full git history
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - name: gitleaks (all commits)
+        uses: gitleaks/gitleaks-action@e0c47f4f8be36e29cdc102c57e68cb5cbf0e8d1e # v3.0.0
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          GITLEAKS_ENABLE_COMMENTS: "false"
+      - name: TruffleHog (all commits, live credentials only)
+        uses: trufflesecurity/trufflehog@31ce31ee1abbcc7dc8eee5764c17121c3044c8b2 # v3.99.7
+        with:
+          version: 3.99.7
+          extra_args: --results=verified,unknown

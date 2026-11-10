@@ -58,7 +58,9 @@
   document.querySelectorAll('.service-grid article').forEach((card,i)=>{
     card.style.setProperty('--card-index',i);
     const art=document.createElement('div');art.className='service-art';art.setAttribute('aria-hidden','true');
-    art.innerHTML='<div class="circuit-stack"><i></i><i></i><i></i><b>'+['IT','SYS','OPS','AMC'][i]+'</b></div>';
+    const stack=document.createElement('div');stack.className='circuit-stack';
+    const label=document.createElement('b');label.textContent=['IT','SYS','OPS','AMC'][i];
+    stack.append(document.createElement('i'),document.createElement('i'),document.createElement('i'),label);art.append(stack);
     card.append(art);
     let frame=0,x=0,y=0;
     card.addEventListener('pointermove',event=>{

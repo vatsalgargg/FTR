@@ -1,0 +1,347 @@
+# Quality, security and UI gates for every push and pull request, then a gated deploy from main.
+# Each gate runs only when a file it checks has changed; skipped gates count as passed, so branch
+# protection still works. Secret scanning always runs. Manual runs (workflow_dispatch) run everything.
+# Third-party actions are pinned to full commit SHAs; Dependabot keeps them current.
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+env:
+  NODE_VERSION: "24"
+  WRANGLER_SEND_METRICS: "false"
+  LANGUAGETOOL_VERSION: "6.6"
+  LANGUAGETOOL_SHA256: "53600506b399bb5ffe1e4c8dec794fd378212f14aaf38ccef9b6f89314d11631"
+
+jobs:
+  changes:
+    name: Detect what changed
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    permissions:
+      contents: read
+      pull-requests: read # List the files changed in a pull request.
+    outputs:
+      code: ${{ github.event_name == 'workflow_dispatch' || steps.filter.outputs.code == 'true' }}
+      content: ${{ github.event_name == 'workflow_dispatch' || steps.filter.outputs.content == 'true' }}
+      ui: ${{ github.event_name == 'workflow_dispatch' || steps.filter.outputs.ui == 'true' }}
+      deps: ${{ github.event_name == 'workflow_dispatch' || steps.filter.outputs.deps == 'true' }}
+      workflows: ${{ github.event_name == 'workflow_dispatch' || steps.filter.outputs.workflows == 'true' }}
+      site: ${{ github.event_name == 'workflow_dispatch' || steps.filter.outputs.site == 'true' }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - id: filter
+        uses: dorny/paths-filter@ceb8a2b8f2d89434be7ff52d3de7ec3738c5cc9d # v4.0.3
+        with:
+          filters: |
+            tooling: &tooling
+              - package.json
+              - package-lock.json
+            code:
+              - *tooling
+              - "dist/**"
+              - "src/**"
+              - "scripts/**"
+              - "tests/**"
+              - "*.config.mjs"
+              - ".htmlvalidate.json"
+              - ".cspell/**"
+              - "*.md"
+              - ".gitignore"
+              - "wrangler.toml"
+            content:
+              - *tooling
+              - "dist/**/*.html"
+              - "dist/llms.txt"
+              - "src/index.js"
+              - "scripts/check-grammar.mjs"
+              - "scripts/site.config.mjs"
+              - "scripts/lib/**"
+              - ".cspell/**"
+            ui:
+              - *tooling
+              - "dist/**"
+              - "src/**"
+              - "wrangler.toml"
+              - "tests/e2e/**"
+              - "playwright.config.mjs"
+              - "scripts/serve-e2e.mjs"
+            deps:
+              - *tooling
+            workflows:
+              - ".github/**"
+            site:
+              - *tooling
+              - "dist/**"
+              - "src/**"
+              - "wrangler.toml"
+
+  quality:
+    name: Lint, spelling, site gate and unit tests
+    needs: changes
+    if: needs.changes.outputs.code == 'true'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: npm
+      - id: install
+        run: npm ci --ignore-scripts --no-audit --no-fund
+      # Each check runs even if an earlier one failed, so one run reports every problem.
+      - name: JavaScript lint (ESLint, including XSS and CSP rules)
+        if: ${{ !cancelled() && steps.install.outcome == 'success' }}
+        run: npm run lint:js
+      - name: CSS lint (Stylelint)
+        if: ${{ !cancelled() && steps.install.outcome == 'success' }}
+        run: npm run lint:css
+      - name: HTML validation and accessibility rules (html-validate)
+        if: ${{ !cancelled() && steps.install.outcome == 'success' }}
+        run: npm run lint:html
+      - name: Spelling (cspell, British English)
+        if: ${{ !cancelled() && steps.install.outcome == 'success' }}
+        run: npm run spell
+      - name: Site release gate (links, CSP, leaks, SEO, Cloudflare limits)
+        if: ${{ !cancelled() && steps.install.outcome == 'success' }}
+        run: npm run check:site
+      - name: Worker security tests and checker self-tests
+        if: ${{ !cancelled() && steps.install.outcome == 'success' }}
+        run: npm test
+      - name: Worker build (wrangler dry run)
+        if: ${{ !cancelled() && steps.install.outcome == 'success' }}
+        run: npm run build:check
+      - name: Known-vulnerable libraries in public files (retire.js)
+        if: ${{ !cancelled() && steps.install.outcome == 'success' }}
+        run: npm run security:vendor
+
+  grammar:
+    name: Grammar, punctuation and wording (LanguageTool)
+    needs: changes
+    if: needs.changes.outputs.content == 'true'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: npm
+      - run: npm ci --ignore-scripts --no-audit --no-fund
+      - uses: actions/setup-java@b843ebf9b913146b38da2eaa7aeddf76074ae1ad # v6.1.0
+        with:
+          distribution: temurin
+          java-version: "21"
+      - id: languagetool-cache
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: ~/languagetool
+          key: languagetool-${{ env.LANGUAGETOOL_VERSION }}-${{ env.LANGUAGETOOL_SHA256 }}
+      - name: Download LanguageTool (checksum verified)
+        if: steps.languagetool-cache.outputs.cache-hit != 'true'
+        run: |
+          curl -fsSL --retry 3 -o "$RUNNER_TEMP/languagetool.zip" "https://languagetool.org/download/LanguageTool-${LANGUAGETOOL_VERSION}.zip"
+          echo "${LANGUAGETOOL_SHA256}  $RUNNER_TEMP/languagetool.zip" | sha256sum --check --strict
+          unzip -q "$RUNNER_TEMP/languagetool.zip" -d ~/languagetool
+      - name: Start LanguageTool server
+        run: |
+          nohup java -Xmx1g -cp ~/languagetool/LanguageTool-${LANGUAGETOOL_VERSION}/languagetool-server.jar \
+            org.languagetool.server.HTTPServer --port 8081 > "$RUNNER_TEMP/languagetool.log" 2>&1 &
+          for _ in $(seq 1 90); do
+            curl -sf http://localhost:8081/v2/languages > /dev/null && exit 0
+            sleep 1
+          done
+          cat "$RUNNER_TEMP/languagetool.log"
+          exit 1
+      - name: Check grammar, punctuation and house style
+        run: npm run grammar
+        env:
+          LANGUAGETOOL_URL: http://localhost:8081
+
+  e2e:
+    name: UI tests (${{ matrix.project }})
+    needs: changes
+    if: needs.changes.outputs.ui == 'true'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 25
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          # desktop-chrome also runs the 16-screen sweep (tests/e2e/screens.spec.mjs).
+          - project: desktop-chrome
+            browser: chromium
+          - project: mobile-chrome
+            browser: chromium
+          - project: desktop-firefox
+            browser: firefox
+          - project: mobile-safari
+            browser: webkit
+    env:
+      PROJECT: ${{ matrix.project }}
+      BROWSER: ${{ matrix.browser }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: npm
+      - run: npm ci --ignore-scripts --no-audit --no-fund
+      - id: browser-cache
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: ~/.cache/ms-playwright
+          key: playwright-${{ matrix.browser }}-${{ hashFiles('package-lock.json') }}
+      - name: Install browser
+        if: steps.browser-cache.outputs.cache-hit != 'true'
+        run: npx playwright install --with-deps "$BROWSER"
+      - name: Install browser system libraries
+        if: steps.browser-cache.outputs.cache-hit == 'true'
+        run: npx playwright install-deps "$BROWSER"
+      - name: Run UI tests against wrangler dev
+        run: npx playwright test --project="$PROJECT"
+      - if: failure()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: playwright-${{ matrix.project }}
+          path: |
+            playwright-report/
+            test-results/
+          retention-days: 7
+
+  secrets:
+    # Always runs: a secret can be pasted into any file.
+    name: Secret scanning (gitleaks + TruffleHog)
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - name: gitleaks (pattern-based, commits in this push or pull request)
+        uses: gitleaks/gitleaks-action@e0c47f4f8be36e29cdc102c57e68cb5cbf0e8d1e # v3.0.0
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          GITLEAKS_ENABLE_COMMENTS: "false"
+      - name: TruffleHog (verifies whether found credentials are live)
+        uses: trufflesecurity/trufflehog@31ce31ee1abbcc7dc8eee5764c17121c3044c8b2 # v3.99.7
+        with:
+          version: 3.99.7
+          extra_args: --results=verified,unknown
+
+  dependencies:
+    name: Dependency and supply-chain checks
+    needs: changes
+    if: needs.changes.outputs.deps == 'true'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: npm
+      - id: install
+        run: npm ci --ignore-scripts --no-audit --no-fund
+      - name: Known vulnerabilities (npm audit)
+        if: ${{ !cancelled() && steps.install.outcome == 'success' }}
+        run: npm audit --audit-level=low
+      - name: Registry signatures and provenance (npm audit signatures)
+        if: ${{ !cancelled() && steps.install.outcome == 'success' }}
+        run: npm audit signatures
+      - name: New vulnerable or badly licensed dependencies in this pull request
+        if: ${{ !cancelled() && github.event_name == 'pull_request' }}
+        uses: actions/dependency-review-action@a1d282b36b6f3519aa1f3fc636f609c47dddb294 # v5.0.0
+        with:
+          fail-on-severity: low
+          deny-licenses: AGPL-1.0-only, AGPL-1.0-or-later, AGPL-3.0-only, AGPL-3.0-or-later, GPL-2.0-only, GPL-2.0-or-later, GPL-3.0-only, GPL-3.0-or-later, SSPL-1.0
+
+  workflows:
+    name: Workflow lint and security (actionlint + zizmor)
+    needs: changes
+    if: needs.changes.outputs.workflows == 'true'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - name: actionlint
+        run: docker run --rm -v "$PWD:/repo" -w /repo rhysd/actionlint:1.7.12@sha256:b1934ee5f1c509618f2508e6eb47ee0d3520686341fec936f3b79331f9315667 -color
+      - name: zizmor
+        if: ${{ !cancelled() }}
+        run: pipx run zizmor==1.30.1 --format=github --min-severity=low .github/
+        env:
+          GH_TOKEN: ${{ github.token }}
+
+  deploy:
+    name: Deploy to Cloudflare and verify production
+    needs: [changes, quality, grammar, e2e, secrets, dependencies, workflows]
+    # Runs after every gate that ran has passed, only when deployable files changed.
+    # Opt in by setting the repository variable CLOUDFLARE_DEPLOY to "true" (see .github/README.md).
+    if: >-
+      ${{ !cancelled() && !contains(needs.*.result, 'failure') && !contains(needs.*.result, 'cancelled')
+      && needs.changes.outputs.site == 'true' && github.event_name != 'pull_request'
+      && github.ref == 'refs/heads/main' && vars.CLOUDFLARE_DEPLOY == 'true' }}
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    environment:
+      name: production
+      url: https://ftrgroup.in
+    concurrency:
+      group: production
+      cancel-in-progress: false
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      # No dependency cache here: the deploy job must not trust anything another run could have written.
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+      - run: npm ci --ignore-scripts --no-audit --no-fund
+      - name: Deploy Worker and static assets
+        run: npx wrangler deploy
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+      - name: Verify production serves this commit (HTTP, headers, assets, TLS)
+        run: npm run check:live -- --expect-current
+      - name: Install Chromium
+        if: ${{ !cancelled() }}
+        run: npx playwright install --with-deps chromium
+      - name: Verify production in real browsers (no errors, CSP violations or broken assets)
+        if: ${{ !cancelled() }}
+        run: npx playwright test --project=desktop-chrome --project=mobile-chrome
+        env:
+          BASE_URL: https://ftrgroup.in
+      - if: failure()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: playwright-production
+          path: |
+            playwright-report/
+            test-results/
+          retention-days: 7

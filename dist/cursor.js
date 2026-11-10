@@ -15,7 +15,7 @@
   ring.append(shape);
   overlay.append(ring, dot);
   document.body.append(overlay);
-  let x = 0, y = 0, rx = 0, ry = 0, frame = 0, last = 0, visible = false, target, bounds = null;
+  let x = 0, y = 0, rx = 0, ry = 0, frame = 0, last = 0, visible = false, bounds = null;
   let dirty = false, activeCard = null;
   function setCard(card) {
     if(card===activeCard)return;
@@ -32,7 +32,6 @@
     frame = 0;
     last = 0;
     setCard(null);
-    target = undefined;
     bounds = null;
   }
   function hover(element) {
@@ -63,11 +62,9 @@
     setCard(card);
     const image = !control && (grid || element?.closest('.partner-grid,.feature-media,.cta-image,.n-partner-grid,.hero-photo,.service-body img'));
     const globe = !control && !image && !element?.closest('.hero-copy,.hero-top,.hero-stats') && element?.closest('.hero');
-    const next = control || image || globe || null;
     // The whole grid is one cursor surface, including its gutters.
     const controlRect = control ? control.getBoundingClientRect() : null;
     bounds = controlRect && controlRect.width < 360 && controlRect.height < 100 ? controlRect : null;
-    target = next;
     overlay.classList.toggle('is-hover', !!control || !!image);
     overlay.classList.toggle('is-image', !!image);
     overlay.classList.toggle('is-globe', !!globe);
@@ -96,7 +93,7 @@
     if (event.target.closest('input,textarea,select,[contenteditable="true"],iframe')) return hide();
     x = event.clientX;
     y = event.clientY;
-    if (!visible) { rx = x; ry = y; target = undefined; visible = true; overlay.classList.add('is-visible'); root.classList.add('cursor-active'); }
+    if (!visible) { rx = x; ry = y; visible = true; overlay.classList.add('is-visible'); root.classList.add('cursor-active'); }
     dirty = true;
     dot.style.transform = `translate3d(${x}px,${y}px,0)`;
     schedule();

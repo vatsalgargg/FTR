@@ -3,6 +3,12 @@ qa/
 .vibecode-security/
 .sites-runtime/
 node_modules/
+.wrangler/
+.dist/
+test-results/
+playwright-report/
+reports/
+.cspellcache
 *.zip
 *.log
 .env

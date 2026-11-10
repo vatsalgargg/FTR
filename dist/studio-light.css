@@ -25,3 +25,6 @@
 [data-theme=light] .page-shell .pill{background:#f5f3ee;color:var(--text)}
 [data-theme=light] .page-shell .pill:hover{background:#b9361d;color:#fff}
 [data-theme=light] .page-shell .error-map{background:#e2dfd7;filter:grayscale(1)}
+[data-theme=light] .page-shell .header .brand,[data-theme=light] .page-shell .header .nav-links a{color:var(--text)}
+[data-theme=light] .page-shell .header .brand-caption,[data-theme=light] .page-shell .error-map .error-map-top,[data-theme=light] .page-shell .error-map .error-map-bottom{color:var(--muted)}
+[data-theme=light] .page-shell .error-map .error-map-top span:last-child{color:var(--text)}
