@@ -65,7 +65,7 @@
 }
 @media(max-width:360px){
   .n-section,.n-hero{padding-inline:16px}
-  .n-hero h1{font-size:35px;letter-spacing:-1.2px}
+  .n-hero .hero-slogan{font-size:35px;letter-spacing:-1.2px}
   .n-actions{gap:8px}.n-actions .n-button{padding-inline:12px;font-size:14px}
   .service-trigger{padding-inline:12px;font-size:16px;gap:8px}
   .process-steps summary{gap:8px}.process-steps h3{font-size:17px}

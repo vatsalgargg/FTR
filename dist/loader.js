@@ -19,21 +19,17 @@
   }
   loader.append(scene);
   document.body.prepend(loader);
-  const started = performance.now();
   let leaving = false;
   function dismiss() {
     if (leaving) return;
     leaving = true;
     loader.classList.add('is-leaving');
-    setTimeout(() => loader.remove(), 500);
+    setTimeout(() => loader.remove(), 250);
   }
-  // One complete orbit on fast loads, with a ceiling for slow or failed media.
-  function ready() {
-    setTimeout(dismiss, Math.max(0, 1150 - (performance.now() - started)));
-  }
-  if (document.readyState === 'complete') ready();
-  else addEventListener('load', ready, {once:true});
-  const deadline = setTimeout(dismiss, 3500);
+  // Leave as soon as the HTML is parsed, never later than 400 ms, so the hero is never held back.
+  if (document.readyState !== 'loading') dismiss();
+  else document.addEventListener('DOMContentLoaded', dismiss, {once:true});
+  const deadline = setTimeout(dismiss, 400);
   addEventListener('pageshow', event => {
     if (event.persisted) { clearTimeout(deadline); loader.remove(); }
   });

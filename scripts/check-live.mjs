@@ -58,7 +58,7 @@ async function checkBehaviour() {
   if (!/^text\/markdown/.test(markdown.headers.get("content-type") ?? "")) report.error(null, null, "Markdown content negotiation is not working.");
   const missing = await get(MISSING);
   if (missing.status !== 404 || !/Page not found/.test(await missing.text())) report.error(null, null, `Unknown pages return ${missing.status} without the custom 404 page.`);
-  for (const [pathname, type] of [["/robots.txt", "text/plain"], ["/sitemap.xml", "xml"], ["/llms.txt", "text/plain"], ["/.well-known/api-catalog", "application/linkset+json"]]) {
+  for (const [pathname, type] of [["/robots.txt", "text/plain"], ["/sitemap.xml", "xml"], ["/llms.txt", "text/plain"]]) {
     const response = await get(pathname);
     if (response.status !== 200 || !(response.headers.get("content-type") ?? "").includes(type)) {
       report.error(null, null, `${pathname} returned ${response.status} ${response.headers.get("content-type")}; expected 200 ${type}.`);

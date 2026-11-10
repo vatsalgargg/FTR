@@ -6,24 +6,7 @@ export const PUBLIC_DIR = "dist";
 
 // Publicly served files that no page references. Lint skips them and check-site warns about them.
 // Delete them (or reference them from a page), then remove them from this list.
-export const LEGACY_UNREFERENCED = [
-  "dist/app.js",
-  "dist/network.js",
-  "dist/sections.js",
-  "dist/template.js",
-  "dist/sections.css",
-  "dist/styles.css",
-  "dist/template.css",
-  "dist/assets/gsap.min.js",
-  "dist/assets/ScrollTrigger.min.js",
-  "dist/assets/cameras.webp",
-  "dist/assets/hero-network-v2.png",
-  "dist/assets/laptop.webp",
-  "dist/assets/obsidian.webp",
-  "dist/assets/technology.webp",
-  "dist/assets/og-image.svg",
-  "dist/assets/ftr-social-preview-v2.svg",
-];
+export const LEGACY_UNREFERENCED = [];
 
 // Files that need no inbound reference: crawler, agent and platform conventions.
 export const CONVENTIONAL_FILES = [
@@ -34,8 +17,6 @@ export const CONVENTIONAL_FILES = [
   "dist/robots.txt",
   "dist/sitemap.xml",
   "dist/llms.txt",
-  "dist/.well-known/api-catalog",
-  "dist/.well-known/api-catalog.json",
 ];
 
 // Used to warn when "© YEAR" or "N years of service" claims go out of date.

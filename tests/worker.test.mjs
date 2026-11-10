@@ -134,8 +134,9 @@ describe("request handling", () => {
     assert.equal(response.status, 200);
     assert.match(response.headers.get("content-type"), /text\/html/);
     assert.match(response.headers.get("vary"), /Accept/);
-    for (const rel of ["api-catalog", "service-desc", "service-doc", "describedby"]) assert.match(response.headers.get("link"), new RegExp(`rel="${rel}"`));
-    assert.match(await response.text(), /<h1>/);
+    assert.match(response.headers.get("link"), /<\/llms\.txt>; rel="describedby"/);
+    for (const rel of ["api-catalog", "service-desc", "service-doc"]) assert.doesNotMatch(response.headers.get("link"), new RegExp(`rel="${rel}"`), `the site has no API, so it must not advertise ${rel}`);
+    assert.match(await response.text(), /<h1[\s>]/);
   });
 
   test("serves Markdown to agents that ask for it", async () => {

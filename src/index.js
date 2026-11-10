@@ -3,11 +3,11 @@
  *
  * 1. Markdown content negotiation (Accept: text/markdown)
  *    Spec: https://isitagentready.com/.well-known/agent-skills/markdown-negotiation/SKILL.md
- * 2. Link response headers for agent discovery
- *    Spec: RFC 8288 & RFC 9727 Section 3
+ * 2. Link response header pointing agents to llms.txt (RFC 8288 rel="describedby").
+ *    The site publishes no API, so it advertises no RFC 9727 api-catalog or service-desc.
  */
 
-const LINK_HEADER = '</.well-known/api-catalog>; rel="api-catalog", </llms.txt>; rel="service-desc", </llms.txt>; rel="service-doc", </llms.txt>; rel="describedby"';
+const LINK_HEADER = '</llms.txt>; rel="describedby"; type="text/plain"';
 const SECURITY_HEADERS = {
   "Content-Security-Policy": "default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; font-src 'self'; connect-src 'none'; object-src 'none'; base-uri 'self'; form-action 'none'; frame-ancestors 'none'; upgrade-insecure-requests",
   "Cross-Origin-Opener-Policy": "same-origin",
@@ -136,16 +136,18 @@ export default {
 function buildMarkdown() {
   return `---
 title: FTR — First Time Resolver
-description: IT solutions and services across India. Since 2010, we've helped businesses source, implement and maintain the technology they depend on.
+description: IT services, AMC and facility management in Gurugram for businesses across India. Since 2010, we've helped businesses source, implement and maintain the technology they depend on.
 canonical: https://ftrgroup.in/
 language: en
 ---
 
 # FTR — First Time Resolver
 
-> YOUR TECHNOLOGY. OUR RESPONSIBILITY.
+> IT services, AMC & facility management in Gurugram
 
 **IT THAT WORKS. BUSINESS THAT MOVES FORWARD.**
+
+YOUR TECHNOLOGY. OUR RESPONSIBILITY.
 
 The right technology. The people to make it work. IT solutions and support for businesses across India.
 
@@ -173,7 +175,7 @@ Our commitment is simple: consistently meet or exceed customer expectations in q
 
 ## 02 / Our Solutions
 
-### YOUR ENTIRE IT ECOSYSTEM. EXPERTLY CONNECTED.
+### OUR IT SERVICES FOR BUSINESS.
 
 From the equipment on your desk to the infrastructure behind your operations, we bring it all together.
 
@@ -222,7 +224,7 @@ Good technology decisions start with listening. We work alongside your team to f
 
 ## 04 / Our Journey
 
-### BUILT ON TRUST. GROWING WITH OUR CUSTOMERS.
+### OUR JOURNEY SINCE 2010.
 
 | Year | Milestone |
 |---|---|
@@ -237,7 +239,7 @@ Good technology decisions start with listening. We work alongside your team to f
 
 ## 05 / Our Partners
 
-### GREAT COMPANY. SHARED PROGRESS.
+### CLIENTS WE'VE WORKED WITH.
 
 A selection of the organisations featured in our company profile:
 
@@ -247,7 +249,7 @@ Hero Cycles, LAVA, Ahresty, BANDO, Dixon, MINDA, Sunwoda, Bellsonica, Tenon, Luc
 
 ## Contact
 
-### YOUR NEXT MOVE. OUR FULL ATTENTION.
+### CONTACT FTR IN GURUGRAM.
 
 **LET'S SOLVE WHAT'S NEXT**
 
