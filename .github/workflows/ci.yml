@@ -296,6 +296,24 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
 
+  ci-passed:
+    # The one check to require in branch protection. It always reports, even when path filters skip
+    # gates, and fails if any gate that ran failed or was cancelled.
+    name: CI passed
+    needs: [changes, quality, grammar, e2e, secrets, dependencies, workflows]
+    if: always()
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - name: Check every gate's result
+        env:
+          RESULTS: ${{ join(needs.*.result, ' ') }}
+        run: |
+          echo "Gate results: $RESULTS"
+          case " $RESULTS " in
+            *" failure "* | *" cancelled "*) echo "A gate failed or was cancelled."; exit 1 ;;
+          esac
+
   deploy:
     name: Deploy to Cloudflare and verify production
     needs: [changes, quality, grammar, e2e, secrets, dependencies, workflows]

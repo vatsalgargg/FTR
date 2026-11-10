@@ -28,7 +28,7 @@ Every push and pull request runs the gates below. **Each gate runs only when a f
 
    Until the variable is set, CI runs every check but does not deploy.
 2. **Protect production.** In *Settings → Environments*, open `production` (CI creates it on the first deploy) and limit it to the `main` branch. Add yourself as a required reviewer if you want to approve each deploy.
-3. **Protect `main`.** In *Settings → Rules → Rulesets*, require a pull request and these status checks: every `CI` job except `deploy`. Do not require `CodeQL`: it only runs when code changes, so a pull request without code changes would wait for it forever. Block force pushes.
+3. **Protect `main`.** In *Settings → Rules → Rulesets*, require a pull request and these status checks: only the `CI passed` check (it summarises every gate and always reports, even when path filters skip a gate). Add yourself to the bypass list so you can still push straight to `main`. Do not require `CodeQL`: it only runs when code changes, so a pull request without code changes would wait for it forever. Block force pushes.
 4. **Turn on GitHub's own scanning.** In *Settings → Advanced Security*: Dependabot alerts, secret scanning and **push protection**, so a secret is rejected before it reaches GitHub.
 
 ## Run the checks locally
