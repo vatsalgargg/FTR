@@ -162,7 +162,7 @@ jobs:
           unzip -q "$RUNNER_TEMP/languagetool.zip" -d ~/languagetool
       - name: Start LanguageTool server
         run: |
-          nohup java -Xmx1g -cp ~/languagetool/LanguageTool-${LANGUAGETOOL_VERSION}/languagetool-server.jar \
+          nohup java -Xmx1g -cp "$HOME/languagetool/LanguageTool-${LANGUAGETOOL_VERSION}/languagetool-server.jar" \
             org.languagetool.server.HTTPServer --port 8081 > "$RUNNER_TEMP/languagetool.log" 2>&1 &
           for _ in $(seq 1 90); do
             curl -sf http://localhost:8081/v2/languages > /dev/null && exit 0
