@@ -118,6 +118,25 @@ test.describe("homepage interactions", () => {
     await expect(toggle).toBeFocused();
   });
 
+  test("mobile menu closes when the user taps outside it and reopens", async ({ page }) => {
+    const toggle = page.locator(".n-menu");
+    const menu = page.locator("#n-navigation");
+    test.skip(!(await toggle.isVisible()), "The menu button only shows on narrow screens.");
+    await toggle.click();
+    await expect(menu).toHaveClass(/is-open/);
+    // Taps inside the panel, away from its links, leave it open.
+    const box = await menu.boundingBox();
+    await page.mouse.click(box.x + box.width - 4, box.y + 4);
+    await expect(toggle).toHaveAttribute("aria-expanded", "true");
+    // The 16px gutter beside the panel is plain page content.
+    await page.mouse.click(box.x / 2, box.y + box.height + 24);
+    await expect(toggle).toHaveAttribute("aria-expanded", "false");
+    await expect(menu).toBeHidden();
+    await toggle.click();
+    await expect(menu).toBeVisible();
+    await expect(menu).toHaveCSS("opacity", "1");
+  });
+
   test("service accordion opens one panel at a time", async ({ page }) => {
     await page.locator("#service-tab-1").click();
     await expect(page.locator("#service-tab-1")).toHaveAttribute("aria-expanded", "true");

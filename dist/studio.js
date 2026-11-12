@@ -1,8 +1,20 @@
 (() => {
  const root=document.documentElement,reduced=matchMedia('(prefers-reduced-motion: reduce)');let off=reduced.matches, smoothScroll=null;root.classList.add('studio-ready');
  const menu=document.querySelector('.n-menu'),mobile=document.querySelector('.n-mobile');
- function setMenu(open){mobile.hidden=!open;menu.setAttribute('aria-expanded',String(open));menu.setAttribute('aria-label',open?'Close menu':'Open menu')}
- menu.addEventListener('click',()=>setMenu(mobile.hidden));mobile.addEventListener('click',e=>{if(e.target.closest('a'))setMenu(false)});document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!mobile.hidden){setMenu(false);menu.focus()}});
+ let menuTimer=0;const menuOpen=()=>menu.getAttribute('aria-expanded')==='true',outsideMenu=target=>!mobile.contains(target)&&!menu.contains(target);
+ // The panel fades and slides via .is-open; `hidden` is only set once the closing transition has finished.
+ function setMenu(open){
+  clearTimeout(menuTimer);menu.setAttribute('aria-expanded',String(open));menu.setAttribute('aria-label',open?'Close menu':'Open menu');
+  if(open){mobile.hidden=false;void mobile.offsetHeight;mobile.classList.add('is-open');return}
+  mobile.classList.remove('is-open');
+  const wait=mobile.hidden?0:Math.max(...getComputedStyle(mobile).transitionDuration.split(',').map(parseFloat))*1000;
+  if(wait>0)menuTimer=setTimeout(()=>{mobile.hidden=true},wait);else mobile.hidden=true;
+ }
+ menu.addEventListener('click',()=>setMenu(!menuOpen()));mobile.addEventListener('click',e=>{if(e.target.closest('a'))setMenu(false)});document.addEventListener('keydown',e=>{if(e.key==='Escape'&&menuOpen()){setMenu(false);menu.focus()}});
+ // Close when the user taps, clicks or moves focus anywhere outside the panel. pointerdown also fires on iOS, where
+ // taps on plain page content never produce a click event.
+ document.addEventListener('pointerdown',e=>{if(menuOpen()&&outsideMenu(e.target))setMenu(false)});
+ document.addEventListener('focusin',e=>{if(menuOpen()&&outsideMenu(e.target))setMenu(false)});
  matchMedia('(min-width:1101px)').addEventListener('change',e=>{if(e.matches)setMenu(false)});
  const motion=document.querySelector('#motion-toggle');function updateMotion(){
  if(off){smoothScroll?.destroy();smoothScroll=null;document.getAnimations().forEach(animation=>animation.cancel());}
