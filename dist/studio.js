@@ -6,7 +6,8 @@
  matchMedia('(min-width:1101px)').addEventListener('change',e=>{if(e.matches)setMenu(false)});
  const motion=document.querySelector('#motion-toggle');function updateMotion(){
  if(off){smoothScroll?.destroy();smoothScroll=null;document.getAnimations().forEach(animation=>animation.cancel());}
- else if(!smoothScroll&&window.Lenis){smoothScroll=new Lenis({smoothWheel:true,duration:1.2,infinite:false,orientation:'vertical',gestureOrientation:'vertical',autoRaf:true,autoToggle:true,anchors:{offset:-90},allowNestedScroll:true,syncTouch:false,stopInertiaOnNavigate:true});}
+ // Smooth scrolling only helps mouse and trackpad wheels; phones keep native scrolling and skip the start-up cost.
+ else if(!smoothScroll&&window.Lenis&&matchMedia('(hover: hover) and (pointer: fine)').matches){smoothScroll=new Lenis({smoothWheel:true,duration:1.2,infinite:false,orientation:'vertical',gestureOrientation:'vertical',autoRaf:true,autoToggle:true,anchors:{offset:-90},allowNestedScroll:true,syncTouch:false,stopInertiaOnNavigate:true});}
  root.classList.toggle('motion-off',off);root.classList.toggle('js-motion',!off);motion.textContent=off?'Motion off':'Motion on';motion.setAttribute('aria-pressed',String(off));document.dispatchEvent(new Event('ftr-motion-change'));schedule()}
  motion.addEventListener('click',()=>{off=!off;updateMotion()});reduced.addEventListener('change',()=>{off=reduced.matches;updateMotion()});
  const panels=[...document.querySelectorAll('.service-panel')];panels.forEach(panel=>panel.querySelector('button').addEventListener('click',()=>{panels.forEach(p=>{const active=p===panel;p.classList.toggle('is-open',active);p.querySelector('button').setAttribute('aria-expanded',String(active));p.querySelector('button b').textContent=active?'−':'+';p.querySelector('.service-body').setAttribute('aria-hidden',String(!active))});}));panels.forEach((p,i)=>p.querySelector('.service-body').setAttribute('aria-hidden',String(i!==0)));

@@ -101,6 +101,18 @@ export default {
         ? await env.ASSETS.fetch(request)
         : await fetch(request);
 
+      // The assets layer canonicalises /index.html, /privacy.html and trailing slashes with a temporary 307.
+      // These URLs move for good, so tell browsers and search engines with a permanent 301.
+      if (response.status === 307) {
+        const location = response.headers.get("Location");
+        if (location) {
+          return secureResponse(new Response(null, {
+            status: 301,
+            headers: { Location: location, "Cache-Control": "public, max-age=3600" },
+          }), request);
+        }
+      }
+
       // Inject Link header and Vary: Accept for page requests.
       if (isPageRequest && response.status === 200) {
         return secureResponse(response, request, {

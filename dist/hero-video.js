@@ -6,9 +6,11 @@
   if (!video || !button) return;
   const reduced = matchMedia('(prefers-reduced-motion: reduce)');
   const connection = navigator.connection;
-  let visible = false, paused = false, selecting = false, ready = false, retried = false;
+  // started stays false until the page has loaded and the browser is idle, so the film never
+  // competes with the poster image, fonts and styles for bandwidth during the first paint.
+  let visible = false, paused = false, selecting = false, ready = false, retried = false, started = false;
   const base = '/assets/technology/hero-server-';
-  const allowed = () => visible && !document.hidden && !paused && !reduced.matches &&
+  const allowed = () => started && visible && !document.hidden && !paused && !reduced.matches &&
     !document.documentElement.classList.contains('motion-off') && !connection?.saveData;
   async function selectSource() {
     // Keep the lightweight rendition when a phone rotates to landscape.
@@ -73,6 +75,10 @@
     button.setAttribute('aria-pressed',String(paused));
     sync();
   });
+  const start = () => { started = true; sync(); };
+  const whenIdle = () => 'requestIdleCallback' in window ? requestIdleCallback(start, {timeout:2000}) : setTimeout(start, 200);
+  if (document.readyState === 'complete') whenIdle();
+  else addEventListener('load', whenIdle, {once:true});
   new IntersectionObserver(entries => {visible = entries[0].isIntersecting;sync();},{threshold:0}).observe(hero);
   document.addEventListener('visibilitychange',sync);
   document.addEventListener('ftr-motion-change',sync);

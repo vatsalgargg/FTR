@@ -122,6 +122,14 @@ describe("request handling", () => {
     assert.equal(response.headers.get("location"), "https://ftrgroup.in/privacy.html?ref=a");
   });
 
+  test("turns the assets layer's temporary canonical redirects into permanent ones", async () => {
+    const assets = { async fetch() { return new Response(null, { status: 307, headers: { Location: "/privacy" } }); } };
+    const response = await call("/privacy.html", {}, { ASSETS: assets });
+    assert.equal(response.status, 301);
+    assert.equal(response.headers.get("location"), "/privacy");
+    assertSecurityBaseline(response, "canonical redirect");
+  });
+
   test("does not redirect local development hosts", async () => {
     for (const host of ["localhost", "127.0.0.1"]) {
       const response = await worker.fetch(new Request(`http://${host}:8787/`), { ASSETS: createAssets() });
